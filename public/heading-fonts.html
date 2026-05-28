@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NEXIRA — Heading Font Comparison</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Orbitron:wght@400;700;900&family=Montserrat:wght@800;900&family=Bebas+Neue&family=Space+Grotesk:wght@500;700&family=Rajdhani:wght@600;700&family=Exo+2:wght@700;800&family=Chakra+Petch:wght@600;700&family=Audiowide&family=Oswald:wght@600;700&family=Sora:wght@700;800&family=Michroma&family=Saira+Condensed:wght@700;800&family=Teko:wght@600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --accent: #2ee8b4;
+      --bg: #05070d;
+      --text: #e8eaf0;
+      --muted: #6b7488;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background:
+        radial-gradient(120% 90% at 70% 0%, #0a1b2e 0%, #05070d 60%),
+        #05070d;
+      color: var(--text);
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      padding: 48px clamp(20px, 5vw, 80px) 120px;
+      min-height: 100vh;
+    }
+
+    .page-head {
+      max-width: 900px;
+      margin: 0 auto 56px;
+      text-align: center;
+    }
+
+    .page-head h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      font-size: clamp(20px, 3vw, 34px);
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .page-head p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card {
+      border: 1px solid rgba(229, 231, 235, 0.1);
+      border-radius: 18px;
+      padding: 36px clamp(20px, 4vw, 48px);
+      background: rgba(255, 255, 255, 0.015);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card .tag {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .heading {
+      line-height: 0.96;
+      letter-spacing: 0.02em;
+      margin-bottom: 18px;
+      text-wrap: balance;
+    }
+
+    .heading .ital {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .card-title {
+      font-size: clamp(22px, 2.4vw, 30px);
+      letter-spacing: 0.04em;
+      color: var(--text);
+      opacity: 0.92;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(229, 231, 235, 0.08);
+      margin: 18px 0;
+    }
+
+    /* ── Font assignments per card ── */
+    .f-anton   { font-family: 'Anton', sans-serif; font-weight: 400; }
+    .f-orbitron{ font-family: 'Orbitron', sans-serif; font-weight: 900; }
+    .f-montser { font-family: 'Montserrat', sans-serif; font-weight: 900; }
+    .f-bebas   { font-family: 'Bebas Neue', sans-serif; font-weight: 400; letter-spacing: 0.04em; }
+    .f-space   { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+    .f-rajdhani{ font-family: 'Rajdhani', sans-serif; font-weight: 700; }
+    .f-exo     { font-family: 'Exo 2', sans-serif; font-weight: 800; }
+    .f-chakra  { font-family: 'Chakra Petch', sans-serif; font-weight: 700; }
+    .f-audio   { font-family: 'Audiowide', sans-serif; font-weight: 400; }
+    .f-oswald  { font-family: 'Oswald', sans-serif; font-weight: 700; }
+    .f-sora    { font-family: 'Sora', sans-serif; font-weight: 800; }
+    .f-michroma{ font-family: 'Michroma', sans-serif; font-weight: 400; letter-spacing: 0; }
+    .f-saira   { font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+    .f-teko    { font-family: 'Teko', sans-serif; font-weight: 700; }
+
+    /* big heading scale differs for condensed vs wide fonts so all read fairly */
+    .h-std { font-size: clamp(30px, 4.6vw, 60px); }
+    .h-wide{ font-size: clamp(22px, 3.2vw, 44px); }
+    .h-cond{ font-size: clamp(36px, 5.6vw, 72px); }
+  </style>
+</head>
+
+<body>
+  <div class="page-head">
+    <h1>HEADING FONT COMPARISON</h1>
+    <p>Each block shows the section heading + a sample card title in a different font.<br />
+      Tell me the one(s) you like and I'll wire it into the site.</p>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const FONTS = [
+      { name: 'Anton (current)', cls: 'f-anton', scale: 'h-cond' },
+      { name: 'Orbitron', cls: 'f-orbitron', scale: 'h-wide' },
+      { name: 'Montserrat ExtraBold', cls: 'f-montser', scale: 'h-std' },
+      { name: 'Bebas Neue', cls: 'f-bebas', scale: 'h-cond' },
+      { name: 'Space Grotesk', cls: 'f-space', scale: 'h-std' },
+      { name: 'Rajdhani', cls: 'f-rajdhani', scale: 'h-std' },
+      { name: 'Exo 2', cls: 'f-exo', scale: 'h-std' },
+      { name: 'Chakra Petch', cls: 'f-chakra', scale: 'h-std' },
+      { name: 'Audiowide', cls: 'f-audio', scale: 'h-wide' },
+      { name: 'Oswald', cls: 'f-oswald', scale: 'h-cond' },
+      { name: 'Sora', cls: 'f-sora', scale: 'h-std' },
+      { name: 'Michroma', cls: 'f-michroma', scale: 'h-wide' },
+      { name: 'Saira Condensed', cls: 'f-saira', scale: 'h-cond' },
+      { name: 'Teko', cls: 'f-teko', scale: 'h-cond' },
+    ];
+
+    const grid = document.getElementById('grid');
+    FONTS.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <span class="tag">${f.name}</span>
+        <div class="heading ${f.cls} ${f.scale}">
+          Three disciplines.<br />
+          One <span class="ital">spatial system</span>.
+        </div>
+        <div class="divider"></div>
+        <div class="card-title ${f.cls}">Web GIS &amp; Mapping</div>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+
+</html>

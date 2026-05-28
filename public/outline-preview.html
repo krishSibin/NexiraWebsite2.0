@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Outline Text Effects — Nexira Spatial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #000;
+    font-family: system-ui, sans-serif;
+    padding: 60px 40px;
+  }
+  h1 {
+    font-size: 10px; font-weight: 400; letter-spacing: 0.22em;
+    text-transform: uppercase; color: #2ee8b4;
+    margin-bottom: 60px; text-align: center;
+    font-family: monospace;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 3px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #050810;
+    padding: 52px 44px 44px;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.04);
+    overflow: hidden;
+  }
+  .num {
+    position: absolute; top: 18px; right: 20px;
+    font-size: 10px; color: #1c2030;
+    font-family: monospace; letter-spacing: 0.1em;
+  }
+  .tag {
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: #2ee8b4;
+    margin-bottom: 28px; display: flex; align-items: center; gap: 10px;
+    opacity: 0.6; font-family: monospace;
+  }
+  .tag::before { content:''; width:16px; height:1px; background:#2ee8b4; display:block; }
+  .hl {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    display: flex; flex-direction: column;
+    margin-bottom: 28px;
+  }
+  .reg {
+    font-size: clamp(40px, 5.5vw, 68px);
+    line-height: 1;
+    color: #7A8BA0;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.12em;
+  }
+  .name {
+    font-size: 10px; color: #252e40;
+    font-family: monospace; letter-spacing: 0.08em;
+  }
+
+  /* ═══════════════════════════════════════════
+     A — FILL FLOOD (animated fill sweeping in)
+  ═══════════════════════════════════════════ */
+  .e-flood .acc {
+    font-size: clamp(56px, 8vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 0.03em;
+    position: relative;
+    display: inline-block;
+    color: transparent;
+    -webkit-text-stroke: 2px #2ee8b4;
+  }
+  .e-flood .acc::after {
+    content: attr(data-t);
+    position: absolute; inset: 0;
+    color: #2ee8b4;
+    -webkit-text-stroke: 0;
+    clip-path: inset(0 100% 0 0);
+    animation: flood-in 2.5s cubic-bezier(0.16,1,0.3,1) infinite;
+    animation-delay: 0.8s;
+  }
+  @keyframes flood-in {
+    0%   { clip-path: inset(0 100% 0 0); }
+    45%  { clip-path: inset(0 0%   0 0); }
+    70%  { clip-path: inset(0 0%   0 0); }
+    100% { clip-path: inset(0 100% 0 0); }
+  }
+
+  /* ═══════════════════════════════════════════
+     B — GRADIENT FILL (teal→blue fill inside)
+  ═══════════════════════════════════════════ */
+  .e-gradfill .acc {
+    font-size: clamp(56px, 8vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 0.03em;
+    display: inline-block;
+    background: linear-gradient(115deg, #2ee8b4 0%, #00c4f5 45%, #7c6fff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 30px rgba(46,232,180,0.4))
+            drop-shadow(0 0 8px rgba(0,196,245,0.3));
+  }
+
+  /* ═══════════════════════════════════════════
+     C — GOLD / WARM
+  ═══════════════════════════════════════════ */
+  .e-gold .acc {
+    font-size: clamp(56px, 8vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 0.03em;
+    color: transparent;
+    -webkit-text-stroke: 2px #e8c84a;
+    filter: drop-shadow(0 0 18px rgba(232,200,74,0.55))
+            drop-shadow(0 0 50px rgba(232,160,40,0.25));
+  }
+
+  /* ═══════════════════════════════════════════
+     D — GIANT SCALE (pure size difference)
+  ═══════════════════════════════════════════ */
+  .e-scale .reg-s {
+    font-size: clamp(28px, 3.5vw, 44px);
+    color: #4a5668;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: 'Anton', sans-serif;
+    line-height: 1;
+    margin-bottom: 0.06em;
+  }
+  .e-scale .acc {
+    font-size: clamp(80px, 12vw, 160px);
+    line-height: 0.85;
+    letter-spacing: 0.01em;
+    color: transparent;
+    -webkit-text-stroke: 2px #2ee8b4;
+    display: block;
+    filter: drop-shadow(0 0 28px rgba(46,232,180,0.5));
+  }
+
+  /* ═══════════════════════════════════════════
+     E — WHITE FILL + GLOW (inverted)
+  ═══════════════════════════════════════════ */
+  .e-white .acc {
+    font-size: clamp(56px, 8vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 0.03em;
+    color: #fff;
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.6))
+            drop-shadow(0 0 40px rgba(46,232,180,0.5))
+            drop-shadow(0 0 80px rgba(46,232,180,0.25));
+  }
+
+  /* ═══════════════════════════════════════════
+     F — COLOR CYCLE (hue rotates)
+  ═══════════════════════════════════════════ */
+  .e-cycle .acc {
+    font-size: clamp(56px, 8vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 0.03em;
+    color: transparent;
+    -webkit-text-stroke: 2px #2ee8b4;
+    filter: drop-shadow(0 0 20px rgba(46,232,180,0.6));
+    animation: hue-cycle 4s linear infinite;
+  }
+  @keyframes hue-cycle {
+    0%   { -webkit-text-stroke-color: #2ee8b4; filter: drop-shadow(0 0 20px rgba(46,232,180,0.6)); }
+    25%  { -webkit-text-stroke-color: #00d4ff; filter: drop-shadow(0 0 20px rgba(0,212,255,0.6)); }
+    50%  { -webkit-text-stroke-color: #7c6fff; filter: drop-shadow(0 0 20px rgba(124,111,255,0.6)); }
+    75%  { -webkit-text-stroke-color: #ff6eb4; filter: drop-shadow(0 0 20px rgba(255,110,180,0.6)); }
+    100% { -webkit-text-stroke-color: #2ee8b4; filter: drop-shadow(0 0 20px rgba(46,232,180,0.6)); }
+  }
+</style>
+</head>
+<body>
+
+<h1>Outline Text — 6 Directions · Nexira Spatial</h1>
+
+<div class="grid">
+
+  <!-- A — Fill Flood -->
+  <div class="card e-flood">
+    <span class="num">A</span>
+    <div class="tag">Fill flood — animated</div>
+    <div class="hl">
+      <span class="reg">From orbit</span>
+      <span class="acc" data-t="to ground.">to ground.</span>
+    </div>
+    <div class="name">Outline fills solid teal → empties → repeats</div>
+  </div>
+
+  <!-- B — Gradient fill -->
+  <div class="card e-gradfill">
+    <span class="num">B</span>
+    <div class="tag">Gradient fill — teal → blue → purple</div>
+    <div class="hl">
+      <span class="reg">From orbit</span>
+      <span class="acc">to ground.</span>
+    </div>
+    <div class="name">Solid gradient inside the letter shapes, no stroke</div>
+  </div>
+
+  <!-- C — Gold -->
+  <div class="card e-gold">
+    <span class="num">C</span>
+    <div class="tag">Gold outline — warm</div>
+    <div class="hl">
+      <span class="reg">From orbit</span>
+      <span class="acc">to ground.</span>
+    </div>
+    <div class="name">Same stroke treatment, amber/gold instead of teal</div>
+  </div>
+
+  <!-- D — Giant scale -->
+  <div class="card e-scale">
+    <span class="num">D</span>
+    <div class="tag">Massive scale — size is the effect</div>
+    <div class="hl">
+      <span class="reg-s">From orbit</span>
+      <span class="acc">to ground.</span>
+    </div>
+    <div class="name">Regular line whisper-small · accent line wall-sized</div>
+  </div>
+
+  <!-- E — White fill + glow -->
+  <div class="card e-white">
+    <span class="num">E</span>
+    <div class="tag">White fill + teal halo</div>
+    <div class="hl">
+      <span class="reg">From orbit</span>
+      <span class="acc">to ground.</span>
+    </div>
+    <div class="name">Filled solid white, teal glow radiates outward</div>
+  </div>
+
+  <!-- F — Color cycle -->
+  <div class="card e-cycle">
+    <span class="num">F</span>
+    <div class="tag">Color cycle — rotating hue</div>
+    <div class="hl">
+      <span class="reg">From orbit</span>
+      <span class="acc">to ground.</span>
+    </div>
+    <div class="name">Stroke color slowly rotates through the spectrum</div>
+  </div>
+
+</div>
+</body>
+</html>
