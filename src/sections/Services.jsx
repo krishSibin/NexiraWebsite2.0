@@ -387,7 +387,8 @@ function Process() {
             trigger: trackRef.current,
             start: 'top 80%',
             end: 'bottom 20%',
-            scrub: 0.6,
+            /* scrub: true = direct 1:1 on mobile (no lag), smooth on desktop */
+            scrub: window.innerWidth <= 800 ? true : 0.6,
           },
         }
       );

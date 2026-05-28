@@ -1959,6 +1959,9 @@ section {
 }
 
 @media (max-width: 800px) {
+  /* Strip expensive glow filter — prevents repaint jank on mobile */
+  .process-path-svg path { filter: none !important; }
+
   .process-slide {
     height: auto;
     padding: 60px 0;
