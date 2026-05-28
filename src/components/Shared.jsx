@@ -1,10 +1,19 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMagnetic } from '../hooks/index.jsx';
 
 /* ============================================================
    NEXIRA — shared UI components
    ============================================================ */
+
+function MenuIcon() {
+  return (
+    <svg width="15" height="10" viewBox="0 0 15 10" fill="none" aria-hidden="true">
+      <path d="M0 1h15M0 5h11M0 9h15" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+    </svg>
+  );
+}
 
 function Eyebrow({ children, className = '', style }) {
   return <span className={`eyebrow ${className}`} style={style}>{children}</span>;
@@ -45,6 +54,7 @@ const NAV_LINKS = ['services', 'process', 'cases', 'industries', 'contact'];
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
     const check = () => {
@@ -65,6 +75,23 @@ function Nav() {
     };
   }, []);
 
+  /* Track active section for mobile brand label */
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: '-35% 0px -35% 0px', threshold: 0 }
+    );
+    NAV_LINKS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, []);
+
   const smoothScroll = (e, id) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -75,6 +102,15 @@ function Nav() {
 
   return (
     <>
+      {/* Mobile hamburger — single fixed element, never moves */}
+      <button
+        className="nav-float-ham"
+        aria-label="Open menu"
+        onClick={() => setMenuOpen(v => !v)}
+      >
+        <MenuIcon />
+      </button>
+
       <div className="nav-center">
       <motion.nav
         className={`nav${scrolled ? ' is-scrolled' : ''}`}
@@ -92,20 +128,13 @@ function Nav() {
         }}
         transition={{ type: 'spring', stiffness: 50, damping: 18, mass: 0.9 }}
       >
-        {/* brand — desktop: scroll to top / mobile: open sidebar */}
-        <a
-          className={`brand${menuOpen ? ' brand--open' : ''}`}
-          href="#top"
-          onClick={(e) => {
-            if (window.innerWidth <= 880) {
-              e.preventDefault();
-              setMenuOpen(v => !v);
-            } else {
-              smoothScroll(e, 'top');
-            }
-          }}
-        >
-          <div className="wm">NEXIRA<small>SPATIAL</small></div>
+        {/* brand — scrolls to top; shows active section on mobile when scrolled */}
+        <a className={`brand${scrolled && activeSection ? ' brand--section' : ''}`} href="#top" onClick={(e) => smoothScroll(e, 'top')}>
+          <div className="wm">
+            <span className="wm-nexira">NEXIRA</span>
+            <small className="wm-spatial">SPATIAL</small>
+            <span className="wm-sec">{activeSection ? activeSection.charAt(0).toUpperCase() + activeSection.slice(1) : ''}</span>
+          </div>
         </a>
 
         {/* desktop links */}
@@ -117,63 +146,81 @@ function Nav() {
           ))}
         </div>
 
-        {/* cta + hamburger (desktop only) */}
+        {/* desktop cta */}
         <div className="nav-right">
           <a className="nav-cta" href="#contact" onClick={(e) => smoothScroll(e, 'contact')}>
             Connect Now
           </a>
         </div>
+
       </motion.nav>
       </div>
 
-      {/* mobile sidebar */}
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            {/* backdrop */}
-            <motion.div
-              className="nav-sidebar-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              onClick={() => setMenuOpen(false)}
-            />
-            {/* drawer */}
-            <motion.div
-              className="nav-sidebar"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-            >
-              <button
-                className="nav-sidebar-close"
-                aria-label="Close menu"
+      {/* mobile sidebar — portalled to body so it's above all stacking contexts */}
+      {createPortal(
+        <AnimatePresence>
+          {menuOpen && (
+            <>
+              <motion.div
+                className="nav-sidebar-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
                 onClick={() => setMenuOpen(false)}
-              >✕</button>
-              <nav className="nav-sidebar-links">
-                {NAV_LINKS.map((id, i) => (
-                  <motion.a
-                    key={id}
-                    href={`#${id}`}
-                    onClick={(e) => smoothScroll(e, id)}
-                    initial={{ opacity: 0, x: 24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 + 0.1, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <span className="nm-num">0{i + 1}</span>
-                    {id.charAt(0).toUpperCase() + id.slice(1)}
-                  </motion.a>
-                ))}
-              </nav>
-              <a className="nav-sidebar-cta" href="#contact" onClick={(e) => smoothScroll(e, 'contact')}>
-                Connect Now
-              </a>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              />
+              <motion.div
+                className="nav-sidebar"
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              >
+                {/* Header */}
+                <div className="nsd-head">
+                  <div className="nsd-brand">
+                    <span>NEXIRA</span>
+                    <small>SPATIAL</small>
+                  </div>
+                  <button className="nsd-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
+                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                      <path d="M1 1l9 9M10 1l-9 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Links */}
+                <nav className="nsd-links">
+                  {NAV_LINKS.map((id, i) => (
+                    <motion.a
+                      key={id}
+                      href={`#${id}`}
+                      onClick={(e) => smoothScroll(e, id)}
+                      initial={{ opacity: 0, x: 28 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.06 + 0.08, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <span className="nsd-num">0{i + 1}</span>
+                      <span className="nsd-label">{id.charAt(0).toUpperCase() + id.slice(1)}</span>
+                      <svg className="nsd-arrow" width="13" height="10" viewBox="0 0 13 10" fill="none">
+                        <path d="M1 5h11M7 1l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </motion.a>
+                  ))}
+                </nav>
+
+                {/* Footer */}
+                <div className="nsd-foot">
+                  <a className="nsd-cta" href="#contact" onClick={(e) => smoothScroll(e, 'contact')}>
+                    Connect Now
+                  </a>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }

@@ -20,6 +20,17 @@ const SVC_GLYPHS = {
       <circle cx="44" cy="46" r="2.5" fill="var(--accent-2)" />
     </svg>
   ),
+  map: (
+    <svg className="svc-glyph" viewBox="0 0 64 64" fill="none">
+      <rect x="8" y="10" width="48" height="44" rx="3" stroke="var(--accent)" strokeWidth="1.5" />
+      <path d="M8 32h48M32 10v44" stroke="var(--accent)" strokeWidth="0.7" opacity="0.25" />
+      <path d="M14 26c5-5 12-7 18-5s13 1 18-4" stroke="var(--accent)" strokeWidth="1.1" opacity="0.55" />
+      <path d="M14 38c5 3 11 2 16-1s12-4 18-1" stroke="var(--accent)" strokeWidth="1.1" opacity="0.4" />
+      <circle cx="32" cy="27" r="4.5" stroke="var(--accent-2)" strokeWidth="1.5" />
+      <circle cx="32" cy="27" r="1.5" fill="var(--accent-2)" />
+      <path d="M32 31.5v4" stroke="var(--accent-2)" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  ),
   it: (
     <svg className="svc-glyph" viewBox="0 0 64 64" fill="none">
       <rect x="8" y="14" width="48" height="32" rx="4" stroke="var(--accent)" strokeWidth="1.5" />
@@ -29,6 +40,17 @@ const SVC_GLYPHS = {
       <circle cx="26" cy="18" r="1.5" fill="var(--accent)" />
       <path d="M16 30l-4 4 4 4M28 30l4 4-4 4M22 28l-4 12" stroke="var(--accent-2)" strokeWidth="1.2" strokeLinecap="round" />
       <path d="M40 30h12M40 36h8M40 42h10" stroke="var(--accent)" strokeWidth="1.2" />
+    </svg>
+  ),
+  model: (
+    <svg className="svc-glyph" viewBox="0 0 64 64" fill="none">
+      <path d="M12 52h40M12 12v40" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M12 42 L22 28 L32 33 L44 17 L52 21" stroke="var(--accent-2)" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M12 42 L22 28 L32 33 L44 17 L52 21 L52 52 L12 52Z" fill="rgba(46,232,180,0.07)" />
+      <circle cx="22" cy="28" r="2.5" fill="var(--accent-2)" />
+      <circle cx="32" cy="33" r="2.5" fill="var(--accent-2)" />
+      <circle cx="44" cy="17" r="2.5" fill="var(--accent)" />
+      <path d="M44 20v8" stroke="var(--accent)" strokeWidth="1" strokeDasharray="2 2" opacity="0.6" />
     </svg>
   ),
   ai: (
@@ -48,23 +70,47 @@ const SVC_GLYPHS = {
       </g>
     </svg>
   ),
+  intern: (
+    <svg className="svc-glyph" viewBox="0 0 64 64" fill="none">
+      <circle cx="22" cy="20" r="6.5" stroke="var(--accent)" strokeWidth="1.5" />
+      <path d="M10 46c0-7 5-12 12-12s12 5 12 12" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="44" cy="20" r="6.5" stroke="var(--accent-2)" strokeWidth="1.5" />
+      <path d="M32 46c0-7 5-12 12-12s12 5 12 12" stroke="var(--accent-2)" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M29 20h6" stroke="var(--accent)" strokeWidth="1.2" strokeLinecap="round" strokeDasharray="2 2" opacity="0.6" />
+    </svg>
+  ),
 };
 
 const SERVICES = [
   {
     key: 'gis', num: '01', title: 'Web GIS & Mapping',
-    desc: 'Custom interactive map applications and high-quality cartography — from bespoke GIS front-ends to web mapping platforms and tile generation for web and print.',
-    items: ['Custom Web GIS applications', 'Interactive map platforms', 'High-quality cartography', 'Map design & tile generation', 'Bespoke GIS front-ends'],
+    desc: 'Custom interactive map applications built on modern web stacks — bespoke GIS front-ends, web mapping platforms, and spatial data visualisation tools.',
+    items: ['Custom Web GIS applications', 'Interactive map platforms', 'Spatial data visualisation', 'Map APIs & integrations', 'Bespoke GIS front-ends'],
   },
   {
-    key: 'it', num: '02', title: 'Remote Sensing & Analytics',
-    desc: 'Satellite and aerial imagery processing paired with spatial analytics — turning raw sensor data into actionable suitability models and predictive geospatial workflows.',
-    items: ['Satellite & aerial imagery', 'Classification & change detection', 'Spatial analytics', 'Suitability modelling', 'Predictive geospatial workflows'],
+    key: 'map', num: '02', title: 'Geospatial Cartography',
+    desc: 'High-quality cartographic design and tile generation — transforming raw geodata into publication-ready maps for web, print, and multi-scale series.',
+    items: ['High-quality cartographic design', 'Map tile generation', 'Print-ready map production', 'Multi-scale map series', 'Thematic & topographic maps'],
   },
   {
-    key: 'ai', num: '03', title: 'Training & Internships',
-    desc: 'Building the next generation of GIS professionals — through tailored training courses, workshops, and hands-on internships for students and early-career specialists.',
-    items: ['Training courses & workshops', 'Tailored GIS coaching', 'Hands-on internships', 'Early-career mentorship', 'Capacity building programs'],
+    key: 'it', num: '03', title: 'Remote Sensing & Imagery',
+    desc: 'Satellite and aerial imagery processing with cutting-edge classification pipelines — turning raw sensor data into actionable insights and change detection reports.',
+    items: ['Satellite & aerial imagery', 'Classification & change detection', 'NDVI & spectral analysis', 'Image preprocessing pipelines', 'Land use & land cover mapping'],
+  },
+  {
+    key: 'model', num: '04', title: 'Modelling & Analytics',
+    desc: 'Spatial analytics, suitability modelling, and predictive geospatial workflows — converting raw location data into strategic decisions grounded in real-world evidence.',
+    items: ['Spatial analytics & statistics', 'Suitability & site modelling', 'Predictive geospatial workflows', 'Network & proximity analysis', 'Geodatabase management'],
+  },
+  {
+    key: 'ai', num: '05', title: 'Training & Capacity Building',
+    desc: 'Structured GIS training programmes and workshops designed for teams, institutions, and government bodies — elevating geospatial competency at every level.',
+    items: ['GIS software training', 'Custom workshop design', 'Institutional capacity building', 'Online & on-site delivery', 'Assessment & certification support'],
+  },
+  {
+    key: 'intern', num: '06', title: 'Internships & Mentorship',
+    desc: 'Hands-on internship placements for students and early-career professionals — real-world project exposure with structured mentorship from our senior GIS team.',
+    items: ['Structured internship programs', 'Real-world project exposure', 'One-on-one mentorship', 'Portfolio development', 'Career pathway guidance'],
   },
 ];
 
@@ -88,25 +134,18 @@ function Services() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const cards = gridRef.current.querySelectorAll('.svc');
-      if (cards.length < 3) return;
+      const cards = Array.from(gridRef.current.querySelectorAll('.svc'));
+      if (cards.length < 2) return;
 
-      // deck: left fans from right, middle rises, right fans from left
-      gsap.set(cards[0], { x: 200, rotate: 7, scale: 0.86, opacity: 0 });
-      gsap.set(cards[1], { y: 52, rotate: 0, scale: 0.80, opacity: 0 });
-      gsap.set(cards[2], { x: -200, rotate: -7, scale: 0.86, opacity: 0 });
+      gsap.set(cards, { y: 48, scale: 0.94, opacity: 0 });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: gridRef.current,
-          start: 'top 78%',
-          once: true,
-        },
+      gsap.timeline({
+        scrollTrigger: { trigger: gridRef.current, start: 'top 78%', once: true },
+      }).to(cards, {
+        y: 0, scale: 1, opacity: 1,
+        duration: 0.75, ease: 'power3.out',
+        stagger: 0.09,
       });
-
-      tl.to(cards[0], { x: 0, rotate: 0, scale: 1, opacity: 1, duration: 0.85, ease: 'power3.out' })
-        .to(cards[1], { y: 0, scale: 1, opacity: 1, duration: 0.85, ease: 'power3.out' }, '-=0.7')
-        .to(cards[2], { x: 0, rotate: 0, scale: 1, opacity: 1, duration: 0.85, ease: 'power3.out' }, '-=0.7');
     }, gridRef);
 
     return () => ctx.revert();
@@ -119,7 +158,7 @@ function Services() {
           <Reveal><Eyebrow>B — Practice areas</Eyebrow></Reveal>
           <Reveal delay={120}>
             <h2 className="display h2">
-              Three&nbsp;disciplines.<br />
+              Six&nbsp;specialisations.<br />
               One&nbsp;<span style={{ color: 'var(--accent)' }}>spatial system</span>.
             </h2>
           </Reveal>
