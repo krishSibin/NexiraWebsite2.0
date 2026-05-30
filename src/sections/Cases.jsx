@@ -417,19 +417,41 @@ function Tech() {
 }
 
 /* ============================================================
-   TESTIMONIALS
+   WHY CHOOSE US (Replacing Testimonials)
    ============================================================ */
-const TESTIMONIALS = [
-  { q: "They didn't sell us a dashboard, they sold us a way of thinking about our coastline. Six months on, every relocation case starts in their atlas.", n: 'Dr. Anjali Mahapatra', r: 'Director · OSDMA', av: 'linear-gradient(135deg, var(--accent), var(--accent-2))' },
-  { q: "Best geospatial team we've worked with. They speak ag, they speak ML, and they ship.", n: 'Vikram Reddy', r: 'VP Data · AgriCore', av: 'linear-gradient(135deg, var(--accent-2), var(--accent))' },
-  { q: 'From the first workshop they were asking the questions our planners had been avoiding for a decade.', n: 'Priya Iyer', r: 'Chief Urban Designer · BMRDA', av: 'linear-gradient(135deg, #ffb858, var(--accent))' },
+const REASONS = [
+  {
+    h: 'Local Expertise, Global Standards',
+    q: 'Born in Kerala, built for the world.',
+    av: 'linear-gradient(135deg, var(--accent), var(--accent-2))'
+  },
+  {
+    h: 'Custom GIS Platforms',
+    q: 'Solutions tailored to your specific use case.',
+    av: 'linear-gradient(135deg, var(--accent-2), var(--accent))'
+  },
+  {
+    h: 'Data Accuracy & Quality',
+    q: 'Precision you can trust for decision-making.',
+    av: 'linear-gradient(135deg, #ffb858, var(--accent))'
+  },
+  {
+    h: 'Technology-Driven Team',
+    q: 'Leveraging AI, cloud, and spatial analytics.',
+    av: 'linear-gradient(135deg, #4d7cff, #2ee8b4)'
+  },
+  {
+    h: 'Government & Enterprise',
+    q: 'Proven results in real-world GIS applications.',
+    av: 'linear-gradient(135deg, #ffb858, #4d7cff)'
+  },
 ];
 
 function Testimonials() {
   const sectionRef = useRef(null);
   const slidesRef = useRef([]);
   const namesRef = useRef([]);
-  const N = TESTIMONIALS.length;
+  const N = REASONS.length;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -438,10 +460,8 @@ function Testimonials() {
     const slides = slidesRef.current.filter(Boolean);
     const names = namesRef.current.filter(Boolean);
 
-    // On mobile the section is height:auto and slides are stacked via CSS
     if (window.innerWidth <= 860) return;
 
-    /* all slides start invisible except first */
     gsap.set(slides, { autoAlpha: 0, y: 60 });
     gsap.set(slides[0], { autoAlpha: 1, y: 0 });
     gsap.set(names, { opacity: 0.3 });
@@ -452,7 +472,7 @@ function Testimonials() {
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: () => `+=${(N - 1) * window.innerHeight}`,
+          end: () => `+=${(N - 1) * window.innerHeight * 0.8}`,
           pin: true,
           pinSpacing: true,
           scrub: 0.8,
@@ -461,10 +481,8 @@ function Testimonials() {
 
       slides.forEach((slide, i) => {
         if (i === N - 1) return;
-        /* fade out current */
         tl.to(slide, { autoAlpha: 0, y: -50, ease: 'power2.in', duration: 0.4 }, i)
           .to(names[i], { opacity: 0.3, ease: 'none', duration: 0.4 }, i)
-          /* fade in next */
           .fromTo(slides[i + 1], { autoAlpha: 0, y: 60 },
             { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.4 }, i + 0.4)
           .to(names[i + 1], { opacity: 1, ease: 'none', duration: 0.3 }, i + 0.4);
@@ -475,36 +493,31 @@ function Testimonials() {
   }, [N]);
 
   return (
-    <section className="testimonials" id="testimonials" data-screen-label="09 Voices" ref={sectionRef}>
+    <section className="testimonials" id="why-choose-us" data-screen-label="09 Choose Us" ref={sectionRef}>
       <div className="test-inner wrap">
 
-        {/* left — name list */}
+        {/* left — feature list */}
         <div className="test-names">
-          <Eyebrow style={{ marginBottom: 40 }}>G — Voices</Eyebrow>
-          {TESTIMONIALS.map((t, i) => (
+          <Eyebrow style={{ marginBottom: 40 }}>G — Why Choose Us</Eyebrow>
+          <p style={{ color: 'var(--accent)', fontSize: '12px', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 40, lineHeight: 1.6 }}>
+            Built on local roots with global capabilities — practical, precise, and proven.
+          </p>
+          {REASONS.map((t, i) => (
             <div key={i} className="test-name-row" ref={el => { namesRef.current[i] = el; }}>
               <span className="test-name-num">{String(i + 1).padStart(2, '0')}</span>
               <div>
-                <div className="test-name-text">{t.n}</div>
-                <div className="test-name-role">{t.r}</div>
+                <div className="test-name-text" style={{ fontSize: '20px' }}>{t.h}</div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* right — quote stage */}
+        {/* right — stage */}
         <div className="test-stage">
-          {TESTIMONIALS.map((t, i) => (
+          {REASONS.map((t, i) => (
             <div key={i} className="test-slide" ref={el => { slidesRef.current[i] = el; }}>
-              <div className="test-bigquote" aria-hidden="true">"</div>
-              <blockquote className="test-q">{t.q}</blockquote>
-              <div className="test-attr">
-                <div className="test-av" style={{ background: t.av }}>{t.n.charAt(0)}</div>
-                <div>
-                  <div className="test-attr-name">{t.n}</div>
-                  <div className="test-attr-role">{t.r}</div>
-                </div>
-              </div>
+              <div className="test-bigquote" aria-hidden="true" style={{ opacity: 0.2 }}>✦</div>
+              <blockquote className="test-q" style={{ fontSize: 'clamp(40px, 5vw, 64px)' }}>{t.q}</blockquote>
             </div>
           ))}
         </div>
