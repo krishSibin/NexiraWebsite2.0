@@ -413,6 +413,13 @@ function Hero() {
             </div>
           </div>
         </div>
+        {/* scroll hint — bottom centre */}
+        <div className="hs-scroll-hint" aria-hidden="true">
+          <div className="hs-scroll-mouse">
+            <div className="hs-scroll-dot" />
+          </div>
+          <span className="hs-scroll-label">SCROLL</span>
+        </div>
 
       </header>
     </div>

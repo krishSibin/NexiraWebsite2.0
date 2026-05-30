@@ -6,7 +6,7 @@ import Lenis from 'lenis';
 import { Nav, Footer } from './components/Shared.jsx';
 import { ScrollRay } from './components/ScrollRay.jsx';
 import { Preloader } from './components/Preloader.jsx';
-import { useTweaks, TweaksPanel, TweaksTrigger } from './components/Tweaks.jsx';
+
 import { Hero, About } from './sections/Hero.jsx';
 import { Services, Stats, Process, Industries } from './sections/Services.jsx';
 import { Cases, Tech, Testimonials, CTA } from './sections/Cases.jsx';
@@ -74,7 +74,7 @@ function Cursor() {
 
 /* ── App ── */
 function App() {
-  const { tweaks, set, open, close, toggle } = useTweaks();
+
   const stampRef = useRef(null);
   const stampTextRef = useRef(null);
 
@@ -167,8 +167,7 @@ function App() {
       {/* Transparent spacer — creates scroll distance to fully reveal the stamp */}
       <div className="foot-spacer" aria-hidden="true" />
 
-      <TweaksTrigger onClick={toggle} open={open} />
-      <TweaksPanel tweaks={tweaks} set={set} open={open} close={close} />
+
     </Fragment>
   );
 }
