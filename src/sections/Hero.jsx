@@ -158,6 +158,22 @@ const NexiraVideoMask = ({ src }) => {
 
       ctx.clearRect(0, 0, w, h);
 
+      // == Fix for iOS Safari Canvas Bug ==
+      // Draw the video FIRST (source-over)
+      const vR = video.videoWidth / video.videoHeight;
+      const cR = w / h;
+      let dx = 0, dy = 0, dw = w, dh = h;
+      if (vR > cR) { dw = h * vR; dx = (w - dw) / 2; }
+      else { dh = w / vR; dy = (h - dh) / 2; }
+
+      ctx.globalCompositeOperation = 'source-over';
+      try { ctx.drawImage(video, dx, dy, dw, dh); } catch (_) { }
+
+      // Then use destination-in to clip the video to the text.
+      // This works reliably on iOS Safari GPU, whereas source-in often fails and draws rectangles.
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.fillStyle = '#fff';
+
       // Size font to fill the canvas height, then auto-shrink to fit width
       let fontSize = h * 0.88;
       ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
@@ -168,20 +184,9 @@ const NexiraVideoMask = ({ src }) => {
       }
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-
-      // Step 1: draw white text as the mask
-      ctx.fillStyle = '#fff';
       ctx.fillText('NEXIRA', w / 2, h / 2);
 
-      // Step 2: cover-fit video clipped to text shape
-      const vR = video.videoWidth / video.videoHeight;
-      const cR = w / h;
-      let dx = 0, dy = 0, dw = w, dh = h;
-      if (vR > cR) { dw = h * vR; dx = (w - dw) / 2; }
-      else { dh = w / vR; dy = (h - dh) / 2; }
-
-      ctx.globalCompositeOperation = 'source-in';
-      try { ctx.drawImage(video, dx, dy, dw, dh); } catch (_) { }
+      // Reset
       ctx.globalCompositeOperation = 'source-over';
     };
 
@@ -222,7 +227,16 @@ const NexiraVideoMask = ({ src }) => {
 
   return (
     <>
-      <video ref={videoRef} src={src} loop muted autoPlay playsInline preload="auto" style={{ display: 'none' }} />
+      <video
+        ref={videoRef}
+        src={src}
+        loop
+        muted
+        autoPlay
+        playsInline
+        preload="auto"
+        style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}
+      />
 
       {/* ── CSS gradient NEXIRA — always shown, works on every browser/device ── */}
       <div
