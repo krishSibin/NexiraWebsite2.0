@@ -2386,16 +2386,14 @@ section {
   background-size: cover;
   background-position: center;
   filter: saturate(1) brightness(0.95);
-  /* Bright and realistic by default */
   transform: scale(1.0);
   transition: filter 0.8s ease, transform 0.8s ease;
 }
 
 .ind-card:hover .ind-img {
-  filter: saturate(0.65) brightness(0.25);
-  /* Dramatically darkens to reveal subtext */
-  transform: scale(1.05);
-  /* Slight zoom-in on hover */
+  /* Keeps the image realistically bright, just a tiny subtle dim to focus on text */
+  filter: saturate(0.9) brightness(0.85);
+  transform: scale(1.03);
 }
 
 /* gradient overlay */
@@ -2408,6 +2406,24 @@ section {
       rgba(0, 0, 0, 0.0) 38%,
       rgba(0, 0, 0, 0.65) 72%,
       rgba(0, 0, 0, 0.92) 100%);
+}
+
+/* extra shadow that rises up specifically on hover for text contrast */
+.ind-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0.0) 0%,
+      rgba(0, 0, 0, 0.2) 30%,
+      rgba(0, 0, 0, 0.8) 60%,
+      rgba(0, 0, 0, 0.98) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.ind-card:hover .ind-overlay::after {
+  opacity: 1;
 }
 
 /* number */
@@ -2553,6 +2569,25 @@ section {
 
   .ind-h {
     font-size: clamp(18px, 5vw, 28px);
+  }
+
+  /* Permanently show subtext and realistic shadow on mobile (no hover available) */
+  .ind-p {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    display: block !important;
+  }
+
+  .ind-overlay::after {
+    opacity: 1 !important;
+  }
+
+  /* Dynamically lock Header to top, Indicator to bottom, and stretch Card in the middle to auto-fit */
+  .ind-pin {
+    justify-content: space-between;
+    padding-top: clamp(80px, 15vh, 110px);
+    padding-bottom: 24px;
+    gap: 16px;
   }
 }
 
@@ -4546,7 +4581,9 @@ footer {
 
   /* industries stack */
   .ind-stack {
-    height: min(440px, 70vw);
+    flex: 1;
+    height: auto;
+    width: 100%;
   }
 
   .ind-progress {
