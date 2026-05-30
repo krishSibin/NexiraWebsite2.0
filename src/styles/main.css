@@ -135,6 +135,18 @@ html {
   cursor: none;
 }
 
+/* Restore normal cursor on touch/mobile devices */
+@media (hover: none) and (pointer: coarse) {
+  html {
+    cursor: auto;
+  }
+
+  a,
+  button {
+    cursor: pointer !important;
+  }
+}
+
 body {
   font-family: var(--font-body);
   font-size: 16px;
@@ -176,7 +188,6 @@ svg {
 a {
   color: inherit;
   text-decoration: none;
-  cursor: none;
 }
 
 button {
@@ -184,7 +195,6 @@ button {
   color: inherit;
   background: none;
   border: 0;
-  cursor: none;
   padding: 0;
 }
 
@@ -1179,11 +1189,17 @@ section {
   align-items: center;
   width: 100%;
   max-width: 1400px;
-  height: clamp(130px, 17vw, 200px);
+  height: clamp(80px, 17vw, 200px);
   margin: 0 auto -8px;
   /* Negative bottom margin closes gap with SPATIAL */
   position: relative;
   background: transparent !important;
+}
+
+@media (max-width: 480px) {
+  .hl-nexira-video-canvas-container {
+    height: clamp(70px, 22vw, 110px);
+  }
 }
 
 .hl-nexira-video-canvas {
@@ -1583,6 +1599,55 @@ section {
 
   .hs-sub {
     font-size: 13px;
+  }
+
+  /* Hide product card on mobile — it overflows below the viewport */
+  .hs-card {
+    display: none;
+  }
+
+  /* Tighten CTA row margin on mobile */
+  .hs-cta-row {
+    margin-top: 24px;
+    gap: 10px;
+  }
+
+  /* Ensure the slide fits without overflow */
+  .hs-slide {
+    width: 95vw;
+    padding: 0 clamp(12px, 3vw, 24px);
+    gap: 16px;
+  }
+
+  /* Tighten gap between headline lines on mobile */
+  .hs-headline {
+    gap: 0.2em;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Extra-small phones: make buttons stack */
+  .hs-cta-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .btn-primary,
+  .btn-ghost {
+    width: 100%;
+    max-width: 260px;
+    justify-content: center;
+  }
+
+  .hs-headline {
+    font-size: clamp(32px, 11vw, 54px);
+  }
+
+  .hsc-meta {
+    display: none;
   }
 }
 

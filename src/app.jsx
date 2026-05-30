@@ -14,6 +14,11 @@ import { Cases, Tech, Testimonials, CTA } from './sections/Cases.jsx';
 gsap.registerPlugin(ScrollTrigger);
 
 
+/* ── Detect touch devices — skip custom cursor on mobile ── */
+const isTouchDevice = typeof window !== 'undefined'
+  && (window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    || 'ontouchstart' in window);
+
 /* ── Custom cursor ── */
 function Cursor() {
   const mx = useMotionValue(-100);
@@ -120,7 +125,7 @@ function App() {
   return (
     <Fragment>
       <Preloader />
-      <Cursor />
+      {!isTouchDevice && <Cursor />}
 
       {/* Brand stamp — fixed behind everything, revealed as page scrolls away */}
       <div className="foot-stamp" aria-hidden="true" ref={stampRef}>

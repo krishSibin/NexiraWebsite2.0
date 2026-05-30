@@ -137,9 +137,11 @@ const NexiraVideoMask = ({ src }) => {
     if (!video || !canvas) return;
     const ctx = canvas.getContext('2d');
     let raf;
+    let videoReady = false;
+    let animT = 0; // for gradient animation fallback
 
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = canvas.getBoundingClientRect();
       if (rect.width === 0) return;
       canvas.width = rect.width * dpr;
@@ -147,23 +149,17 @@ const NexiraVideoMask = ({ src }) => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const render = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const w = canvas.width / dpr;
-      const h = canvas.height / dpr;
-      if (w === 0 || h === 0) { raf = requestAnimationFrame(render); return; }
-      ctx.clearRect(0, 0, w, h);
-
+    const drawText = (w, h) => {
       // Adaptive letter spacing — tight on mobile, wide on desktop
-      const spacing = Math.max(4, Math.min(28, w * 0.03));
+      const spacing = Math.max(2, Math.min(28, w * 0.025));
       ctx.letterSpacing = `${spacing}px`;
 
       let fontSize = h * 0.88;
       ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
 
-      // Auto-fit: shrink until text fits within 88% canvas width
+      // Auto-fit: shrink until text fits within 90% canvas width
       let metrics = ctx.measureText('NEXIRA');
-      const maxW = w * 0.88;
+      const maxW = w * 0.90;
       if (metrics.width > maxW) {
         fontSize *= (maxW / metrics.width);
         ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
@@ -171,42 +167,84 @@ const NexiraVideoMask = ({ src }) => {
 
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = 'white';
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2;
       ctx.lineJoin = 'round';
+    };
 
-      ctx.strokeText('NEXIRA', w / 2, h / 2);
-      ctx.fillText('NEXIRA', w / 2, h / 2);
+    const render = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+      if (w === 0 || h === 0) { raf = requestAnimationFrame(render); return; }
 
-      const vR = video.videoWidth / video.videoHeight;
-      const cR = w / h;
-      let dx = 0, dy = 0, dw = w, dh = h;
-      if (vR > cR) { dw = h * vR; dx = (w - dw) / 2; }
-      else { dh = w / vR; dy = (h - dh) / 2; }
+      animT += 0.008;
+      ctx.clearRect(0, 0, w, h);
 
-      ctx.globalCompositeOperation = 'source-in';
-      ctx.drawImage(video, dx, dy, dw, dh);
-      ctx.globalCompositeOperation = 'source-over';
+      drawText(w, h);
+
+      if (videoReady && !video.paused && video.readyState >= 2) {
+        // === Video mask path ===
+        ctx.fillStyle = 'white';
+        ctx.strokeStyle = 'white';
+        ctx.strokeText('NEXIRA', w / 2, h / 2);
+        ctx.fillText('NEXIRA', w / 2, h / 2);
+
+        const vR = video.videoWidth / video.videoHeight;
+        const cR = w / h;
+        let dx = 0, dy = 0, dw = w, dh = h;
+        if (vR > cR) { dw = h * vR; dx = (w - dw) / 2; }
+        else { dh = w / vR; dy = (h - dh) / 2; }
+
+        ctx.globalCompositeOperation = 'source-in';
+        ctx.drawImage(video, dx, dy, dw, dh);
+        ctx.globalCompositeOperation = 'source-over';
+      } else {
+        // === Fallback: animated gradient fill (works on all browsers/devices) ===
+        const gradX = (Math.sin(animT) * 0.5 + 0.5) * w;
+        const grad = ctx.createLinearGradient(gradX - w * 0.6, 0, gradX + w * 0.6, h);
+        grad.addColorStop(0, '#2ee8b4');
+        grad.addColorStop(0.35, '#4d7cff');
+        grad.addColorStop(0.65, '#a78bfa');
+        grad.addColorStop(1, '#2ee8b4');
+
+        ctx.fillStyle = grad;
+        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+        ctx.strokeText('NEXIRA', w / 2, h / 2);
+        ctx.fillText('NEXIRA', w / 2, h / 2);
+      }
+
       raf = requestAnimationFrame(render);
     };
 
     const start = async () => {
-      await document.fonts.load(`900 100px "Big Shoulders Display"`);
+      await document.fonts.load(`900 100px "Big Shoulders Display"`).catch(() => { });
       resize();
-      if (!video.paused) render();
+      // Start rendering immediately — fallback gradient shows even before video
+      if (!raf) raf = requestAnimationFrame(render);
+      // Aggressively attempt play (needed for some mobile browsers)
+      try { await video.play(); } catch (_) { /* silently continue with fallback */ }
     };
 
-    const handlePlay = () => { resize(); render(); };
+    const handleCanPlay = () => {
+      videoReady = true;
+      video.play().catch(() => { });
+    };
+
+    const handlePlay = () => {
+      videoReady = true;
+      resize();
+    };
 
     // ResizeObserver redraws on any viewport change (mobile/desktop)
     const ro = new ResizeObserver(() => { resize(); });
     ro.observe(canvas);
 
+    video.addEventListener('canplaythrough', handleCanPlay);
     video.addEventListener('play', handlePlay);
     start();
 
     return () => {
+      video.removeEventListener('canplaythrough', handleCanPlay);
       video.removeEventListener('play', handlePlay);
       ro.disconnect();
       cancelAnimationFrame(raf);
@@ -215,7 +253,16 @@ const NexiraVideoMask = ({ src }) => {
 
   return (
     <>
-      <video ref={videoRef} src={src} loop muted autoPlay playsInline style={{ display: 'none' }} />
+      <video
+        ref={videoRef}
+        src={src}
+        loop
+        muted
+        autoPlay
+        playsInline
+        preload="auto"
+        style={{ display: 'none' }}
+      />
       <canvas ref={canvasRef} className="hl-nexira-video-canvas" />
     </>
   );
