@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useTilt, Reveal, CountUp } from '../hooks';
+import { Reveal, CountUp } from '../hooks';
 import { Eyebrow } from '../components/Shared.jsx';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -86,73 +86,67 @@ const SERVICES = [
     key: 'gis', num: '01', title: 'Web GIS & Mapping',
     desc: 'Custom interactive map applications built on modern web stacks — bespoke GIS front-ends, web mapping platforms, and spatial data visualisation tools.',
     items: ['Custom Web GIS applications', 'Interactive map platforms', 'Spatial data visualisation', 'Map APIs & integrations', 'Bespoke GIS front-ends'],
+    img: '/svc-1.jpeg',
   },
   {
     key: 'map', num: '02', title: 'Geospatial Cartography',
     desc: 'High-quality cartographic design and tile generation — transforming raw geodata into publication-ready maps for web, print, and multi-scale series.',
     items: ['High-quality cartographic design', 'Map tile generation', 'Print-ready map production', 'Multi-scale map series', 'Thematic & topographic maps'],
+    img: '/svc-2.jpeg',
   },
   {
     key: 'it', num: '03', title: 'Remote Sensing & Imagery',
     desc: 'Satellite and aerial imagery processing with cutting-edge classification pipelines — turning raw sensor data into actionable insights and change detection reports.',
     items: ['Satellite & aerial imagery', 'Classification & change detection', 'NDVI & spectral analysis', 'Image preprocessing pipelines', 'Land use & land cover mapping'],
+    img: '/svc-3.jpeg',
   },
   {
     key: 'model', num: '04', title: 'Modelling & Analytics',
     desc: 'Spatial analytics, suitability modelling, and predictive geospatial workflows — converting raw location data into strategic decisions grounded in real-world evidence.',
     items: ['Spatial analytics & statistics', 'Suitability & site modelling', 'Predictive geospatial workflows', 'Network & proximity analysis', 'Geodatabase management'],
+    img: '/svc-4.jpeg',
   },
   {
     key: 'ai', num: '05', title: 'Training & Capacity Building',
     desc: 'Structured GIS training programmes and workshops designed for teams, institutions, and government bodies — elevating geospatial competency at every level.',
     items: ['GIS software training', 'Custom workshop design', 'Institutional capacity building', 'Online & on-site delivery', 'Assessment & certification support'],
+    img: '/svc-5.jpeg',
   },
   {
     key: 'intern', num: '06', title: 'Internships & Mentorship',
     desc: 'Hands-on internship placements for students and early-career professionals — real-world project exposure with structured mentorship from our senior GIS team.',
     items: ['Structured internship programs', 'Real-world project exposure', 'One-on-one mentorship', 'Portfolio development', 'Career pathway guidance'],
+    img: '/svc-6.jpeg',
   },
 ];
 
 function ServiceCard({ s }) {
-  const tiltRef = useTilt(9);
   return (
-    <article ref={tiltRef} className={`svc svc-${s.key}`}>
-      <span className="svc-num">SERVICE / {s.num}</span>
-      {SVC_GLYPHS[s.key]}
-      <h3 className="svc-title">{s.title}</h3>
-      <p className="svc-desc">{s.desc}</p>
-      <ul className="svc-list">
-        {s.items.map((it, i) => <li key={i}>{it}</li>)}
-      </ul>
+    <article className={`svc svc-${s.key}`}>
+      <img src={s.img} alt={s.title} loading="lazy" className="svc-bg" />
+      <div className="svc-overlay">
+        <span className="svc-num-badge">0{s.num}</span>
+        <div className="svc-info">
+          {SVC_GLYPHS[s.key]}
+          <h3 className="svc-title">{s.title}</h3>
+        </div>
+      </div>
     </article>
   );
 }
 
 function Services() {
-  const gridRef = useRef(null);
+  const sectionRef = useRef(null);
+  const marqueeRef = useRef(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const cards = Array.from(gridRef.current.querySelectorAll('.svc'));
-      if (cards.length < 2) return;
-
-      gsap.set(cards, { y: 48, scale: 0.94, opacity: 0 });
-
-      gsap.timeline({
-        scrollTrigger: { trigger: gridRef.current, start: 'top 78%', once: true },
-      }).to(cards, {
-        y: 0, scale: 1, opacity: 1,
-        duration: 0.75, ease: 'power3.out',
-        stagger: 0.09,
-      });
-    }, gridRef);
-
-    return () => ctx.revert();
+    // Marquee is now handled by CSS animation for better performance
   }, []);
 
+
+
   return (
-    <section className="services" id="services" data-screen-label="03 Services">
+    <section className="services" id="services" data-screen-label="03 Services" ref={sectionRef}>
       <div className="wrap">
         <div className="section-head">
           <Reveal><Eyebrow>B — Practice areas</Eyebrow></Reveal>
@@ -162,12 +156,13 @@ function Services() {
               One&nbsp;<span style={{ color: 'var(--accent)' }}>spatial system</span>.
             </h2>
           </Reveal>
-          <Reveal delay={240}>
-            <p className="lede">Our practice fuses geographic intelligence with software engineering and machine learning — so every map is alive, every system is intelligent, and every decision is grounded in the real world.</p>
-          </Reveal>
         </div>
-        <div className="svc-grid" ref={gridRef}>
+      </div>
+      <div className="svc-track">
+        <div className="svc-marquee" ref={marqueeRef}>
           {SERVICES.map((s) => <ServiceCard key={s.key} s={s} />)}
+          {/* duplicate for seamless loop */}
+          {SERVICES.map((s) => <ServiceCard key={`${s.key}-2`} s={s} />)}
         </div>
       </div>
     </section>

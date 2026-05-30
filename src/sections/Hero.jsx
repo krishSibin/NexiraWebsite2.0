@@ -53,40 +53,46 @@ function StarField() {
       onRefresh: (self) => { progress.v = self.progress; },
     });
 
+    let isVisible = true;
+    const obs = new IntersectionObserver(([e]) => { isVisible = e.isIntersecting; }, { threshold: 0 });
+    obs.observe(canvas);
+
     const render = () => {
-      const zoom = progress.v * 2.5;
-      c.clearRect(0, 0, W, H);
+      if (isVisible) {
+        const zoom = progress.v * 2.5;
+        c.setTransform(1, 0, 0, 1, 0, 0);
+        c.clearRect(0, 0, canvas.width, canvas.height);
+        c.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      for (const s of STARS) {
-        s.t += s.ts * 0.006;
-        const twinkle = 0.88 + 0.12 * Math.sin(s.t); // very subtle
+        for (const s of STARS) {
+          s.t += s.ts * 0.006;
+          const twinkle = 0.88 + 0.12 * Math.sin(s.t);
 
-        const ox = (s.x - 0.5) * W;
-        const oy = (s.y - 0.5) * H;
-        const factor = 1 + s.z * zoom;
-        const px = W / 2 + ox * factor;
-        const py = H / 2 + oy * factor;
+          const ox = (s.x - 0.5) * W;
+          const oy = (s.y - 0.5) * H;
+          const factor = 1 + s.z * zoom;
+          const px = W / 2 + ox * factor;
+          const py = H / 2 + oy * factor;
 
-        if (px < -4 || px > W + 4 || py < -4 || py > H + 4) continue;
+          if (px < -4 || px > W + 4 || py < -4 || py > H + 4) continue;
 
-        /* fade out stars flying very close past camera */
-        const flyFade = Math.max(0, 1 - Math.max(0, s.z * zoom - 1.4));
-        const alpha = s.o * twinkle * flyFade;
-        if (alpha < 0.02) continue;
+          const flyFade = Math.max(0, 1 - Math.max(0, s.z * zoom - 1.4));
+          const alpha = s.o * twinkle * flyFade;
+          if (alpha < 0.02) continue;
 
-        /* sharp solid dot — no glow, no blur */
-        c.beginPath();
-        c.arc(px, py, Math.max(0.2, s.r), 0, Math.PI * 2);
-        c.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
-        c.fill();
+          c.beginPath();
+          c.arc(px, py, Math.max(0.2, s.r), 0, Math.PI * 2);
+          c.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+          c.fill();
+        }
       }
-
       raf = requestAnimationFrame(render);
     };
     raf = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(raf);
+      obs.disconnect();
       window.removeEventListener('resize', resize);
       st.kill();
     };
@@ -114,12 +120,106 @@ const SLIDES = [
   },
   {
     lines: [
-      [<span className="hl-nexira">NEXIRA</span>, 'hl-accent'],
+      ['NEXIRA_VIDEO', 'hl-accent'],
       ['Spatial', ''],
     ],
     cta: true,
   },
 ];
+
+const NexiraVideoMask = ({ src }) => {
+  const canvasRef = useRef(null);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+    const ctx = canvas.getContext('2d');
+    let raf;
+
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0) return;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const render = () => {
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+      if (w === 0 || h === 0) { raf = requestAnimationFrame(render); return; }
+      ctx.clearRect(0, 0, w, h);
+
+      // Adaptive letter spacing — tight on mobile, wide on desktop
+      const spacing = Math.max(4, Math.min(28, w * 0.03));
+      ctx.letterSpacing = `${spacing}px`;
+
+      let fontSize = h * 0.88;
+      ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
+
+      // Auto-fit: shrink until text fits within 88% canvas width
+      let metrics = ctx.measureText('NEXIRA');
+      const maxW = w * 0.88;
+      if (metrics.width > maxW) {
+        fontSize *= (maxW / metrics.width);
+        ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
+      }
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 3;
+      ctx.lineJoin = 'round';
+
+      ctx.strokeText('NEXIRA', w / 2, h / 2);
+      ctx.fillText('NEXIRA', w / 2, h / 2);
+
+      const vR = video.videoWidth / video.videoHeight;
+      const cR = w / h;
+      let dx = 0, dy = 0, dw = w, dh = h;
+      if (vR > cR) { dw = h * vR; dx = (w - dw) / 2; }
+      else { dh = w / vR; dy = (h - dh) / 2; }
+
+      ctx.globalCompositeOperation = 'source-in';
+      ctx.drawImage(video, dx, dy, dw, dh);
+      ctx.globalCompositeOperation = 'source-over';
+      raf = requestAnimationFrame(render);
+    };
+
+    const start = async () => {
+      await document.fonts.load(`900 100px "Big Shoulders Display"`);
+      resize();
+      if (!video.paused) render();
+    };
+
+    const handlePlay = () => { resize(); render(); };
+
+    // ResizeObserver redraws on any viewport change (mobile/desktop)
+    const ro = new ResizeObserver(() => { resize(); });
+    ro.observe(canvas);
+
+    video.addEventListener('play', handlePlay);
+    start();
+
+    return () => {
+      video.removeEventListener('play', handlePlay);
+      ro.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [src]);
+
+  return (
+    <>
+      <video ref={videoRef} src={src} loop muted autoPlay playsInline style={{ display: 'none' }} />
+      <canvas ref={canvasRef} className="hl-nexira-video-canvas" />
+    </>
+  );
+};
 
 function Hero() {
   const wrapRef = useRef(null);
@@ -219,7 +319,13 @@ function Hero() {
             <div key={i} ref={el => { slideRefs.current[i] = el; }} className="hs-slide">
               <h1 className="hs-headline">
                 {s.lines.map(([text, cls], j) => (
-                  <span key={j} className={cls || undefined}>{text}</span>
+                  text === 'NEXIRA_VIDEO' ? (
+                    <div key={j} className="hl-nexira-video-canvas-container">
+                      <NexiraVideoMask src="/nexira-video.mp4" />
+                    </div>
+                  ) : (
+                    <span key={j} className={cls || undefined}>{text}</span>
+                  )
                 ))}
               </h1>
               {s.cta && (
@@ -290,39 +396,47 @@ function TerrainAboutBg() {
     resize();
     window.addEventListener('resize', resize);
 
+    let isVisible = true;
+    const obs = new IntersectionObserver(([e]) => { isVisible = e.isIntersecting; }, { threshold: 0 });
+    obs.observe(canvas);
+
     const render = () => {
-      t += 0.0018;
-      ctx.clearRect(0, 0, W, H);
-      const numC = 34, steps = 260;
-      for (let i = 0; i < numC; i++) {
-        const baseY = (i / (numC - 1)) * H;
-        const cf = 1 - Math.abs((i / (numC - 1)) - 0.5) * 1.6;
-        const alpha = Math.max(0, 0.05 + 0.04 * cf + 0.02 * Math.sin(i * 0.55 + t * 1.3));
-        ctx.beginPath();
-        for (let s = 0; s <= steps; s++) {
-          const x = (s / steps) * W;
-          const nx = x / W;
-          const y = baseY
-            + 22 * Math.sin(nx * 5.8 + t * 0.65 + i * 0.38)
-            + 11 * Math.sin(nx * 14.2 - t * 0.42 + i * 0.82)
-            + 32 * Math.sin(nx * 2.9 + t * 0.21 + i * 1.15)
-            + 7 * Math.sin(nx * 28 + t * 1.1 + i * 0.25);
-          s === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      if (isVisible) {
+        t += 0.0018;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const numC = 20, steps = 180;
+        for (let i = 0; i < numC; i++) {
+          const baseY = (i / (numC - 1)) * H;
+          const cf = 1 - Math.abs((i / (numC - 1)) - 0.5) * 1.6;
+          const alpha = Math.max(0, 0.05 + 0.04 * cf + 0.02 * Math.sin(i * 0.55 + t * 1.3));
+          ctx.beginPath();
+          for (let s = 0; s <= steps; s++) {
+            const x = (s / steps) * W;
+            const nx = x / W;
+            const y = baseY
+              + 22 * Math.sin(nx * 5.8 + t * 0.65 + i * 0.38)
+              + 11 * Math.sin(nx * 14.2 - t * 0.42 + i * 0.82)
+              + 32 * Math.sin(nx * 2.9 + t * 0.21 + i * 1.15)
+              + 7 * Math.sin(nx * 28 + t * 1.1 + i * 0.25);
+            s === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = `rgba(46,232,180,${alpha.toFixed(3)})`;
+          ctx.lineWidth = 0.7;
+          ctx.stroke();
         }
-        ctx.strokeStyle = `rgba(46,232,180,${alpha.toFixed(3)})`;
-        ctx.lineWidth = 0.7;
-        ctx.stroke();
+        const sx = ((t * 28) % (W + 80)) - 40;
+        const sg = ctx.createLinearGradient(sx - 30, 0, sx + 30, 0);
+        sg.addColorStop(0, 'transparent');
+        sg.addColorStop(0.5, 'rgba(46,232,180,0.025)');
+        sg.addColorStop(1, 'transparent');
+        ctx.fillStyle = sg; ctx.fillRect(sx - 30, 0, 60, H);
       }
-      const sx = ((t * 28) % (W + 80)) - 40;
-      const sg = ctx.createLinearGradient(sx - 30, 0, sx + 30, 0);
-      sg.addColorStop(0, 'transparent');
-      sg.addColorStop(0.5, 'rgba(46,232,180,0.025)');
-      sg.addColorStop(1, 'transparent');
-      ctx.fillStyle = sg; ctx.fillRect(sx - 30, 0, 60, H);
       raf = requestAnimationFrame(render);
     };
     raf = requestAnimationFrame(render);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
+    return () => { cancelAnimationFrame(raf); obs.disconnect(); window.removeEventListener('resize', resize); };
   }, []);
 
   return <canvas ref={ref} className="about-canvas" />;

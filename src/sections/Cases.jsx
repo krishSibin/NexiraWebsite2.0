@@ -138,21 +138,31 @@ function AtmosSky() {
     resize();
 
     let raf;
+    let isVisible = true;
+
+    const obs = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+    }, { threshold: 0 });
+    obs.observe(container);
+
     const animate = (time) => {
-      const t = time * 0.001;
-      uniforms.uTime.value = t;
-      uniforms.uGradientMixer.value = (Math.sin(t * 0.25) + 1) / 2; // morphing cycle
+      if (isVisible) {
+        const t = time * 0.001;
+        uniforms.uTime.value = t;
+        uniforms.uGradientMixer.value = (Math.sin(t * 0.25) + 1) / 2;
 
-      mesh.rotation.y = t * 0.02;
-      mesh.rotation.z = t * 0.01;
+        mesh.rotation.y = t * 0.02;
+        mesh.rotation.z = t * 0.01;
 
-      renderer.render(scene, camera);
+        renderer.render(scene, camera);
+      }
       raf = requestAnimationFrame(animate);
     };
     raf = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(raf);
+      obs.disconnect();
       window.removeEventListener('resize', resize);
       renderer.dispose();
       container.removeChild(renderer.domElement);
@@ -171,25 +181,20 @@ gsap.registerPlugin(ScrollTrigger);
 
 const CASES = [
   {
-    num: 'SAMPLE / 01', chip: 'WEB GIS / 2025',
-    title: 'Custom Web GIS Platform',
-    body: 'An end-to-end interactive web mapping platform built for a government agency — integrating live spatial data layers, custom cartography and an intuitive GIS front-end accessible from any browser.',
-    meta: [['Layers', '24+'], ['Users', 'Govt'], ['Stack', 'MapLibre']],
-    img: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1400&q=80',
+    num: '01 / 02', chip: 'HAZARD ANALYSIS / 2025',
+    title: 'Hazard Analysis Dashboard',
+    body: 'An interactive risk intelligence platform for spatial hazard assessment — visualising multi-layered threat data, risk zones and analytical outputs for informed decision-making.',
+    meta: [['Type', 'Dashboard'], ['Domain', 'Hazard GIS'], ['Stack', 'MapLibre']],
+    img: '/case-hazard-dashboard.jpg',
+    url: 'https://nexira-spatial-map-service.vercel.app/',
   },
   {
-    num: 'SAMPLE / 02', chip: 'REMOTE SENSING / 2024',
-    title: 'Satellite Imagery Analysis',
-    body: 'Multi-temporal satellite and aerial imagery classification for land use and change detection — delivering high-accuracy LULC maps to support environmental planning and resource management.',
-    meta: [['Accuracy', '92%+'], ['Coverage', 'Kerala'], ['Source', 'Sentinel-2']],
-    img: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1400&q=80',
-  },
-  {
-    num: 'SAMPLE / 03', chip: 'ANALYTICS / 2024',
-    title: 'Spatial Suitability Modelling',
-    body: 'Predictive geospatial workflows combining field surveys, satellite data and spatial analytics to produce suitability models — helping organizations identify optimal locations for operations and investment.',
-    meta: [['Model', 'Suitability'], ['Region', 'South India'], ['Output', 'Risk Surface']],
-    img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1400&q=80',
+    num: '02 / 02', chip: 'WEB MAPPING / 2025',
+    title: 'Interactive Hazard Web Map',
+    body: 'A live web mapping platform for real-time hazard visualisation — integrating spatial data layers, custom cartography and geospatial analysis accessible from any browser.',
+    meta: [['Type', 'Web Map'], ['Domain', 'Hazard GIS'], ['Stack', 'Leaflet']],
+    img: '/case-hazard-webmap.jpg',
+    url: 'https://web-map-v2.vercel.app/',
   },
 ];
 
@@ -262,7 +267,7 @@ function Cases() {
               <div className="case-card-left">
                 <h3 className="case-card-title">{c.title}</h3>
                 <p className="case-card-desc">{c.body}</p>
-                <BtnGhost>View Case Study</BtnGhost>
+                <BtnGhost href={c.url} as="a" target="_blank" rel="noopener noreferrer">View Case Study</BtnGhost>
               </div>
               <div className="case-card-stats">
                 {c.meta.map(([l, v]) => (
@@ -369,42 +374,8 @@ function Tech() {
   const track1Ref = useRef(null);
 
   useEffect(() => {
-    const track = track1Ref.current;
-    if (!track) return;
-
-    /* Total width of ONE set (half the duplicated track) */
-    const totalW = track.scrollWidth / 2;
-    let x = 0;
-    let speed = 1;       // px per frame at base
-    let targetSpeed = 1;
-    let raf;
-
-    const BASE = 0.6;    // px/frame idle
-    const MAX = 2.2;    // px/frame at full scroll boost
-
-    function lerp(a, b, t) { return a + (b - a) * t; }
-
-    function tick() {
-      speed = lerp(speed, targetSpeed, 0.05);
-      targetSpeed = lerp(targetSpeed, BASE, 0.03);
-
-      x -= speed;
-      if (x <= -totalW) x += totalW; // seamless wrap
-
-      track.style.transform = `translateX(${x}px)`;
-      raf = requestAnimationFrame(tick);
-    }
-    raf = requestAnimationFrame(tick);
-
-    function onScroll() {
-      targetSpeed = Math.min(MAX, targetSpeed + 0.18);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('scroll', onScroll);
-    };
+    // Marquee is now handled by CSS animation for better performance
+    // No JS loop or scroll listeners needed
   }, []);
 
   /* Duplicate for seamless loop */
