@@ -3043,6 +3043,10 @@ section {
   overflow: hidden;
 }
 
+.test-slide-heading {
+  display: none;
+}
+
 /* individual slide — absolutely stacked */
 .test-slide {
   position: absolute;
@@ -3120,15 +3124,20 @@ section {
 /* mobile: stack vertically */
 @media (max-width: 860px) {
   .test-inner {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: min-content 1fr;
-    /* Push the stage into remaining track */
+    display: block;
     height: 100dvh;
-    padding-top: clamp(80px, 12vh, 120px);
-    padding-bottom: 24px;
-    align-items: stretch;
+    padding: 0;
     overflow: hidden;
+  }
+
+  .test-left-column {
+    position: absolute;
+    top: clamp(80px, 12vh, 120px);
+    left: 16px;
+    right: 16px;
+    z-index: 10;
+    pointer-events: none;
+    /* Let touches pass to canvas if needed */
   }
 
   .testimonials {
@@ -3137,9 +3146,12 @@ section {
   }
 
   .test-stage {
-    position: relative;
-    height: 100%;
-    margin-top: 0;
+    position: absolute;
+    inset: 0;
+    height: 100dvh;
+    width: 100%;
+    margin: 0;
+    z-index: 1;
   }
 
   /* Completely hide the manual card list AND its container because mobile now natively uses the central GSAP animated stage! */
@@ -3157,6 +3169,11 @@ section {
   .test-q {
     max-width: 100%;
     padding: 0 16px;
+  }
+
+  /* Show the heading under the logo ONLY on mobile */
+  .test-slide-heading {
+    display: block !important;
   }
 }
 
@@ -4352,26 +4369,7 @@ footer {
   }
 }
 
-/* ── 860px: Testimonials mobile override (GSAP skipped via JS) ── */
-@media (max-width: 860px) {
-  .test-stage {
-    height: auto !important;
-    overflow: visible !important;
-  }
 
-  .test-slide {
-    position: relative !important;
-    inset: auto !important;
-    visibility: visible !important;
-    transform: none !important;
-    padding: 28px 0;
-    border-top: 1px solid var(--line);
-  }
-
-  .test-slide:first-child {
-    border-top: none;
-  }
-}
 
 /* ── 768px: Tablet ── */
 @media (max-width: 768px) {

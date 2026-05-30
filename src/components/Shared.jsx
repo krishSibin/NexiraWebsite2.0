@@ -10,7 +10,7 @@ import { useMagnetic } from '../hooks/index.jsx';
 function MenuIcon() {
   return (
     <svg width="15" height="10" viewBox="0 0 15 10" fill="none" aria-hidden="true">
-      <path d="M0 1h15M0 5h11M0 9h15" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+      <path d="M0 1h15M0 5h11M0 9h15" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   );
 }
@@ -112,48 +112,48 @@ function Nav() {
       </button>
 
       <div className="nav-center">
-      <motion.nav
-        className={`nav${scrolled ? ' is-scrolled' : ''}`}
-        initial={{ opacity: 0, y: -20 }}
-        animate={{
-          opacity: 1,
-          y: 0,
-          maxWidth: scrolled ? '860px' : '1160px',
-          backgroundColor: scrolled ? 'rgba(4,16,12,0.55)' : 'rgba(0,0,0,0)',
-          backdropFilter: scrolled ? 'blur(48px) saturate(320%) brightness(1.08)' : 'blur(0px)',
-          borderColor: scrolled ? 'rgba(46,232,180,0.28)' : 'rgba(229,231,235,0)',
-          boxShadow: scrolled
-            ? '0 8px 48px -8px rgba(0,0,0,0.75), 0 0 24px -8px rgba(46,232,180,0.08), inset 0 1px 0 rgba(46,232,180,0.35), inset 0 -1px 0 rgba(46,232,180,0.06)'
-            : '0 0px 0px 0px rgba(0,0,0,0)',
-        }}
-        transition={{ type: 'spring', stiffness: 50, damping: 18, mass: 0.9 }}
-      >
-        {/* brand — scrolls to top; shows active section on mobile when scrolled */}
-        <a className={`brand${scrolled && activeSection ? ' brand--section' : ''}`} href="#top" onClick={(e) => smoothScroll(e, 'top')}>
-          <div className="wm">
-            <span className="wm-nexira">NEXIRA</span>
-            <small className="wm-spatial">SPATIAL</small>
-            <span className="wm-sec">{activeSection ? activeSection.charAt(0).toUpperCase() + activeSection.slice(1) : ''}</span>
-          </div>
-        </a>
-
-        {/* desktop links */}
-        <div className="nav-links">
-          {NAV_LINKS.map(id => (
-            <a key={id} href={`#${id}`} onClick={(e) => smoothScroll(e, id)}>
-              {id.charAt(0).toUpperCase() + id.slice(1)}
-            </a>
-          ))}
-        </div>
-
-        {/* desktop cta */}
-        <div className="nav-right">
-          <a className="nav-cta" href="#contact" onClick={(e) => smoothScroll(e, 'contact')}>
-            Connect Now
+        <motion.nav
+          className={`nav${scrolled ? ' is-scrolled' : ''}`}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            maxWidth: scrolled ? '860px' : '1160px',
+            backgroundColor: scrolled ? 'rgba(4,16,12,0.55)' : 'rgba(0,0,0,0)',
+            backdropFilter: scrolled ? 'blur(48px) saturate(320%) brightness(1.08)' : 'blur(0px)',
+            borderColor: scrolled ? 'rgba(46,232,180,0.28)' : 'rgba(229,231,235,0)',
+            boxShadow: scrolled
+              ? '0 8px 48px -8px rgba(0,0,0,0.75), 0 0 24px -8px rgba(46,232,180,0.08), inset 0 1px 0 rgba(46,232,180,0.35), inset 0 -1px 0 rgba(46,232,180,0.06)'
+              : '0 0px 0px 0px rgba(0,0,0,0)',
+          }}
+          transition={{ type: 'spring', stiffness: 50, damping: 18, mass: 0.9 }}
+        >
+          {/* brand — scrolls to top; shows active section on mobile when scrolled */}
+          <a className={`brand${scrolled && activeSection ? ' brand--section' : ''}`} href="#top" onClick={(e) => smoothScroll(e, 'top')}>
+            <div className="wm">
+              <span className="wm-nexira">NEXIRA</span>
+              <small className="wm-spatial">SPATIAL</small>
+              <span className="wm-sec">{activeSection ? activeSection.charAt(0).toUpperCase() + activeSection.slice(1) : ''}</span>
+            </div>
           </a>
-        </div>
 
-      </motion.nav>
+          {/* desktop links */}
+          <div className="nav-links">
+            {NAV_LINKS.map(id => (
+              <a key={id} href={`#${id}`} onClick={(e) => smoothScroll(e, id)}>
+                {id.charAt(0).toUpperCase() + id.slice(1)}
+              </a>
+            ))}
+          </div>
+
+          {/* desktop cta */}
+          <div className="nav-right">
+            <a className="nav-cta" href="#contact" onClick={(e) => smoothScroll(e, 'contact')}>
+              Connect Now
+            </a>
+          </div>
+
+        </motion.nav>
       </div>
 
       {/* mobile sidebar — portalled to body so it's above all stacking contexts */}
@@ -184,7 +184,7 @@ function Nav() {
                   </div>
                   <button className="nsd-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
                     <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-                      <path d="M1 1l9 9M10 1l-9 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                      <path d="M1 1l9 9M10 1l-9 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
                     </svg>
                   </button>
                 </div>
@@ -203,7 +203,7 @@ function Nav() {
                       <span className="nsd-num">0{i + 1}</span>
                       <span className="nsd-label">{id.charAt(0).toUpperCase() + id.slice(1)}</span>
                       <svg className="nsd-arrow" width="13" height="10" viewBox="0 0 13 10" fill="none">
-                        <path d="M1 5h11M7 1l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M1 5h11M7 1l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </motion.a>
                   ))}

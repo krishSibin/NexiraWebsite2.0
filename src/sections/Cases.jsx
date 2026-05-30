@@ -496,28 +496,30 @@ function Testimonials() {
     <section className="testimonials" id="why-choose-us" data-screen-label="09 Choose Us" ref={sectionRef}>
       <div className="test-inner wrap">
 
-        {/* section header (visible on all screens) */}
-        <div className="test-head">
-          <Eyebrow style={{ marginBottom: 40 }}>G — Why Choose Us</Eyebrow>
-          <p style={{ color: 'var(--accent)', fontSize: '12px', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 40, lineHeight: 1.6 }}>
-            Built on local roots with global capabilities — practical, precise, and proven.
-          </p>
-        </div>
+        {/* left column — header + desktop feature list */}
+        <div className="test-left-column" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          {/* section header (visible on all screens) */}
+          <div className="test-head">
+            <Eyebrow style={{ marginBottom: 40 }}>G — Why Choose Us</Eyebrow>
+            <p style={{ color: 'var(--accent)', fontSize: '12px', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 40, lineHeight: 1.6 }}>
+              Built on local roots with global capabilities — practical, precise, and proven.
+            </p>
+          </div>
 
-        {/* left — desktop feature list */}
-        <div className="test-names">
-          <div className="test-carousel">
-            {REASONS.map((t, i) => (
-              <div key={i} className="test-name-row" ref={el => { namesRef.current[i] = el; }}>
-                <span className="test-name-num">{String(i + 1).padStart(2, '0')}</span>
-                <div>
-                  <div className="test-name-text" style={{ fontSize: '20px' }}>{t.h}</div>
-                  <div className="test-mobile-q" style={{ marginTop: '12px', fontSize: '15px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>
-                    {t.q}
+          <div className="test-names">
+            <div className="test-carousel">
+              {REASONS.map((t, i) => (
+                <div key={i} className="test-name-row" ref={el => { namesRef.current[i] = el; }}>
+                  <span className="test-name-num">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <div className="test-name-text" style={{ fontSize: '20px' }}>{t.h}</div>
+                    <div className="test-mobile-q" style={{ marginTop: '12px', fontSize: '15px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>
+                      {t.q}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
@@ -541,8 +543,8 @@ function Testimonials() {
                   <circle cx="32" cy="33" r="4" fill="#fff" />
                 </svg>
               </div>
-              <div className="test-q" style={{ fontSize: 'clamp(22px, 2.8vw, 38px)', lineHeight: 1.45, fontWeight: 400, maxWidth: '28ch', margin: '0 auto' }}>
-                <div style={{ color: 'var(--accent)', fontSize: 'clamp(12px, 4vw, 16px)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 20 }}>
+              <div className="test-q" style={{ fontSize: 'clamp(22px, 2.8vw, 38px)', lineHeight: 1.45, fontWeight: 400, maxWidth: '28ch', margin: '0 auto', textAlign: 'center' }}>
+                <div className="test-slide-heading" style={{ color: 'var(--accent)', fontSize: 'clamp(12px, 4vw, 16px)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 20 }}>
                   {String(i + 1).padStart(2, '0')} <span style={{ opacity: 0.5 }}>/</span> {t.h}
                 </div>
                 {t.q}
