@@ -2385,14 +2385,17 @@ section {
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: saturate(0.45) brightness(0.38);
-  transform: scale(1.05);
+  filter: saturate(1) brightness(0.95);
+  /* Bright and realistic by default */
+  transform: scale(1.0);
   transition: filter 0.8s ease, transform 0.8s ease;
 }
 
 .ind-card:hover .ind-img {
-  filter: saturate(0.85) brightness(0.58);
-  transform: scale(1.0);
+  filter: saturate(0.65) brightness(0.25);
+  /* Dramatically darkens to reveal subtext */
+  transform: scale(1.05);
+  /* Slight zoom-in on hover */
 }
 
 /* gradient overlay */

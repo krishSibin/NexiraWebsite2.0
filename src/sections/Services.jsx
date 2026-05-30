@@ -472,12 +472,12 @@ function Process() {
    INDUSTRIES — image mask grid
    ============================================================ */
 const INDUSTRIES = [
-  { n: '01', h: 'Urban & Smart Cities', p: 'Digital twins, mobility, planning — the city as a live model.', img: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1200&q=80', cls: 'ind-1', coords: '40.7128° N  74.0060° W', tag: 'D-TWIN' },
-  { n: '02', h: 'Agriculture', p: 'Crop health, yield forecasting and precision input maps.', img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1000&q=80', cls: 'ind-2', coords: '23.4512° N  78.2341° E', tag: 'NDVI' },
-  { n: '03', h: 'Environment', p: 'Forests, water, biodiversity, climate adaptation.', img: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=900&q=80', cls: 'ind-3', coords: '51.5074° N  0.1278° W', tag: 'CLAS' },
-  { n: '04', h: 'Utilities & Energy', p: 'Network inventory, vegetation risk, grid intelligence.', img: 'https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=900&q=80', cls: 'ind-4', coords: '35.6762° N  139.6503° E', tag: 'VEGR' },
-  { n: '05', h: 'Mining & Resources', p: 'Volumetrics, change detection, tenement compliance.', img: 'https://images.unsplash.com/photo-1494412519320-aa613df615a3?w=900&q=80', cls: 'ind-5', coords: '25.2744° S  133.7751° E', tag: 'VOL' },
-  { n: '06', h: 'Defence & Security', p: 'Mission planning, terrain analysis, situational awareness.', img: 'https://images.unsplash.com/photo-1474900078985-faab2a3df5cc?w=900&q=80', cls: 'ind-6', coords: '55.7558° N  37.6173° E', tag: 'MSIV' },
+  { n: '01', h: 'Urban Planning & Smart Cities', p: 'Location intelligence for sustainable city development and smart services.', img: '/ind-1.jpg', cls: 'ind-1', coords: '40.7128° N  74.0060° W', tag: 'D-TWIN' },
+  { n: '02', h: 'Agriculture & Plantation Management', p: 'Precision mapping for crop health, yield forecasts and resource planning.', img: '/ind-2.jpg', cls: 'ind-2', coords: '23.4512° N  78.2341° E', tag: 'NDVI' },
+  { n: '03', h: 'Environment & Forestry', p: 'Monitoring, conservation planning and landcover change detection.', img: '/ind-3.jpg', cls: 'ind-3', coords: '51.5074° N  0.1278° W', tag: 'CLAS' },
+  { n: '04', h: 'Infrastructure & Utilities', p: 'Asset mapping, network analysis and maintenance planning.', img: '/ind-4.jpg', cls: 'ind-4', coords: '35.6762° N  139.6503° E', tag: 'VEGR' },
+  { n: '05', h: 'Disaster Management & Risk Mapping', p: 'Rapid response maps, hazard modelling and risk communication tools.', img: '/ind-5.jpg', cls: 'ind-5', coords: '25.2744° S  133.7751° E', tag: 'VOL' },
+  { n: '06', h: 'Transport & Logistics Optimization', p: 'Route optimisation, fleet tracking and network planning for efficiency.', img: '/ind-6.jpg', cls: 'ind-6', coords: '55.7558° N  37.6173° E', tag: 'MSIV' },
 ];
 
 function Industries() {
