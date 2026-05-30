@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BtnPrimary, BtnGhost } from '../components/Shared.jsx';
@@ -130,6 +130,7 @@ const SLIDES = [
 const NexiraVideoMask = ({ src }) => {
   const canvasRef = useRef(null);
   const videoRef = useRef(null);
+  const [canvasReady, setCanvasReady] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -137,133 +138,107 @@ const NexiraVideoMask = ({ src }) => {
     if (!video || !canvas) return;
     const ctx = canvas.getContext('2d');
     let raf;
-    let videoReady = false;
-    let animT = 0; // for gradient animation fallback
+    let running = false;
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = canvas.getBoundingClientRect();
-      if (rect.width === 0) return;
+      if (!rect.width) return;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const drawText = (w, h) => {
-      // Adaptive letter spacing — tight on mobile, wide on desktop
-      const spacing = Math.max(2, Math.min(28, w * 0.025));
-      ctx.letterSpacing = `${spacing}px`;
-
-      let fontSize = h * 0.88;
-      ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
-
-      // Auto-fit: shrink until text fits within 90% canvas width
-      let metrics = ctx.measureText('NEXIRA');
-      const maxW = w * 0.90;
-      if (metrics.width > maxW) {
-        fontSize *= (maxW / metrics.width);
-        ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
-      }
-
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.lineWidth = 2;
-      ctx.lineJoin = 'round';
-    };
-
-    const render = () => {
+    const draw = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = canvas.width / dpr;
       const h = canvas.height / dpr;
-      if (w === 0 || h === 0) { raf = requestAnimationFrame(render); return; }
+      // Guard: only draw when video has valid decoded frames
+      if (!w || !h || video.readyState < 2 || video.paused || !video.videoWidth || !video.videoHeight) return;
 
-      animT += 0.008;
       ctx.clearRect(0, 0, w, h);
 
-      drawText(w, h);
-
-      if (videoReady && !video.paused && video.readyState >= 2) {
-        // === Video mask path ===
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'white';
-        ctx.strokeText('NEXIRA', w / 2, h / 2);
-        ctx.fillText('NEXIRA', w / 2, h / 2);
-
-        const vR = video.videoWidth / video.videoHeight;
-        const cR = w / h;
-        let dx = 0, dy = 0, dw = w, dh = h;
-        if (vR > cR) { dw = h * vR; dx = (w - dw) / 2; }
-        else { dh = w / vR; dy = (h - dh) / 2; }
-
-        ctx.globalCompositeOperation = 'source-in';
-        ctx.drawImage(video, dx, dy, dw, dh);
-        ctx.globalCompositeOperation = 'source-over';
-      } else {
-        // === Fallback: animated gradient fill (works on all browsers/devices) ===
-        const gradX = (Math.sin(animT) * 0.5 + 0.5) * w;
-        const grad = ctx.createLinearGradient(gradX - w * 0.6, 0, gradX + w * 0.6, h);
-        grad.addColorStop(0, '#2ee8b4');
-        grad.addColorStop(0.35, '#4d7cff');
-        grad.addColorStop(0.65, '#a78bfa');
-        grad.addColorStop(1, '#2ee8b4');
-
-        ctx.fillStyle = grad;
-        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-        ctx.strokeText('NEXIRA', w / 2, h / 2);
-        ctx.fillText('NEXIRA', w / 2, h / 2);
+      // Size font to fill the canvas height, then auto-shrink to fit width
+      let fontSize = h * 0.88;
+      ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
+      const m = ctx.measureText('NEXIRA');
+      if (m.width > w * 0.92) {
+        fontSize *= (w * 0.92) / m.width;
+        ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
       }
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
 
-      raf = requestAnimationFrame(render);
+      // Step 1: draw white text as the mask
+      ctx.fillStyle = '#fff';
+      ctx.fillText('NEXIRA', w / 2, h / 2);
+
+      // Step 2: cover-fit video clipped to text shape
+      const vR = video.videoWidth / video.videoHeight;
+      const cR = w / h;
+      let dx = 0, dy = 0, dw = w, dh = h;
+      if (vR > cR) { dw = h * vR; dx = (w - dw) / 2; }
+      else { dh = w / vR; dy = (h - dh) / 2; }
+
+      ctx.globalCompositeOperation = 'source-in';
+      try { ctx.drawImage(video, dx, dy, dw, dh); } catch (_) { }
+      ctx.globalCompositeOperation = 'source-over';
     };
 
-    const start = async () => {
+    const loop = () => {
+      if (!running) return;
+      draw();
+      raf = requestAnimationFrame(loop);
+    };
+
+    const onPlay = async () => {
       await document.fonts.load(`900 100px "Big Shoulders Display"`).catch(() => { });
       resize();
-      // Start rendering immediately — fallback gradient shows even before video
-      if (!raf) raf = requestAnimationFrame(render);
-      // Aggressively attempt play (needed for some mobile browsers)
-      try { await video.play(); } catch (_) { /* silently continue with fallback */ }
+      running = true;
+      // Wait until video has actual frame data before showing canvas
+      const waitForFrame = () => {
+        if (video.readyState >= 2 && video.videoWidth > 0) {
+          setCanvasReady(true); // hide CSS text, show canvas
+          loop();
+        } else {
+          setTimeout(waitForFrame, 80);
+        }
+      };
+      waitForFrame();
     };
 
-    const handleCanPlay = () => {
-      videoReady = true;
-      video.play().catch(() => { });
-    };
-
-    const handlePlay = () => {
-      videoReady = true;
-      resize();
-    };
-
-    // ResizeObserver redraws on any viewport change (mobile/desktop)
-    const ro = new ResizeObserver(() => { resize(); });
+    const ro = new ResizeObserver(resize);
     ro.observe(canvas);
-
-    video.addEventListener('canplaythrough', handleCanPlay);
-    video.addEventListener('play', handlePlay);
-    start();
+    video.addEventListener('play', onPlay);
+    video.play().catch(() => { });
 
     return () => {
-      video.removeEventListener('canplaythrough', handleCanPlay);
-      video.removeEventListener('play', handlePlay);
-      ro.disconnect();
+      running = false;
       cancelAnimationFrame(raf);
+      ro.disconnect();
+      video.removeEventListener('play', onPlay);
     };
   }, [src]);
 
   return (
     <>
-      <video
-        ref={videoRef}
-        src={src}
-        loop
-        muted
-        autoPlay
-        playsInline
-        preload="auto"
-        style={{ display: 'none' }}
+      <video ref={videoRef} src={src} loop muted autoPlay playsInline preload="auto" style={{ display: 'none' }} />
+
+      {/* ── CSS gradient NEXIRA — always shown, works on every browser/device ── */}
+      <div
+        className="hl-nexira-css"
+        style={{ opacity: canvasReady ? 0 : 1, pointerEvents: 'none' }}
+        aria-hidden="true"
+      >
+        NEXIRA
+      </div>
+
+      {/* ── Canvas video mask — fades in only when desktop video is confirmed playing ── */}
+      <canvas
+        ref={canvasRef}
+        className="hl-nexira-video-canvas"
+        style={{ opacity: canvasReady ? 1 : 0, position: 'absolute', inset: 0 }}
       />
-      <canvas ref={canvasRef} className="hl-nexira-video-canvas" />
     </>
   );
 };
