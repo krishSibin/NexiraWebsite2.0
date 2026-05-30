@@ -460,7 +460,7 @@ function Testimonials() {
     const slides = slidesRef.current.filter(Boolean);
     const names = namesRef.current.filter(Boolean);
 
-    if (window.innerWidth <= 860) return;
+    // Mobile animation engine is now enabled (GSAP runs on all screens)
 
     gsap.set(slides, { autoAlpha: 0, y: 60 });
     gsap.set(slides[0], { autoAlpha: 1, y: 0 });
@@ -496,28 +496,57 @@ function Testimonials() {
     <section className="testimonials" id="why-choose-us" data-screen-label="09 Choose Us" ref={sectionRef}>
       <div className="test-inner wrap">
 
-        {/* left — feature list */}
-        <div className="test-names">
+        {/* section header (visible on all screens) */}
+        <div className="test-head">
           <Eyebrow style={{ marginBottom: 40 }}>G — Why Choose Us</Eyebrow>
           <p style={{ color: 'var(--accent)', fontSize: '12px', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 40, lineHeight: 1.6 }}>
             Built on local roots with global capabilities — practical, precise, and proven.
           </p>
-          {REASONS.map((t, i) => (
-            <div key={i} className="test-name-row" ref={el => { namesRef.current[i] = el; }}>
-              <span className="test-name-num">{String(i + 1).padStart(2, '0')}</span>
-              <div>
-                <div className="test-name-text" style={{ fontSize: '20px' }}>{t.h}</div>
+        </div>
+
+        {/* left — desktop feature list */}
+        <div className="test-names">
+          <div className="test-carousel">
+            {REASONS.map((t, i) => (
+              <div key={i} className="test-name-row" ref={el => { namesRef.current[i] = el; }}>
+                <span className="test-name-num">{String(i + 1).padStart(2, '0')}</span>
+                <div>
+                  <div className="test-name-text" style={{ fontSize: '20px' }}>{t.h}</div>
+                  <div className="test-mobile-q" style={{ marginTop: '12px', fontSize: '15px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>
+                    {t.q}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* right — stage */}
         <div className="test-stage">
           {REASONS.map((t, i) => (
-            <div key={i} className="test-slide" ref={el => { slidesRef.current[i] = el; }}>
-              <div className="test-bigquote" aria-hidden="true" style={{ opacity: 0.2 }}>✦</div>
-              <blockquote className="test-q" style={{ fontSize: 'clamp(40px, 5vw, 64px)' }}>{t.q}</blockquote>
+            <div key={i} className="test-slide" style={{ alignItems: 'center', textAlign: 'center' }} ref={el => { slidesRef.current[i] = el; }}>
+              <div aria-hidden="true" style={{ marginBottom: 28, opacity: 0.35 }}>
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* Isometric outline */}
+                  <path d="M32 10 L54 22 V42 L32 54 L10 42 V22 Z" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round" opacity="0.6" />
+                  <path d="M32 10 V33" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round" opacity="0.6" />
+                  <path d="M54 22 L32 33 L10 22" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round" opacity="0.6" />
+                  {/* Floating data nodes */}
+                  <circle cx="32" cy="10" r="3.5" fill="var(--accent)" />
+                  <circle cx="54" cy="22" r="3.5" fill="var(--accent)" />
+                  <circle cx="10" cy="22" r="3.5" fill="var(--accent)" />
+                  <circle cx="54" cy="42" r="3.5" fill="var(--accent)" />
+                  <circle cx="10" cy="42" r="3.5" fill="var(--accent)" />
+                  <circle cx="32" cy="54" r="3.5" fill="var(--accent)" />
+                  <circle cx="32" cy="33" r="4" fill="#fff" />
+                </svg>
+              </div>
+              <div className="test-q" style={{ fontSize: 'clamp(22px, 2.8vw, 38px)', lineHeight: 1.45, fontWeight: 400, maxWidth: '28ch', margin: '0 auto' }}>
+                <div style={{ color: 'var(--accent)', fontSize: 'clamp(12px, 4vw, 16px)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 20 }}>
+                  {String(i + 1).padStart(2, '0')} <span style={{ opacity: 0.5 }}>/</span> {t.h}
+                </div>
+                {t.q}
+              </div>
             </div>
           ))}
         </div>

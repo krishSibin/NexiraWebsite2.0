@@ -2940,6 +2940,39 @@ section {
   overflow: hidden;
   border-top: 1px solid var(--line);
   background: var(--bg);
+  position: relative;
+}
+
+/* Left gradient glow */
+.testimonials::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 420px;
+  height: 100%;
+  background: linear-gradient(to right,
+      rgba(46, 232, 180, 0.22) 0%,
+      rgba(77, 124, 255, 0.12) 45%,
+      transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Right gradient glow */
+.testimonials::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100%;
+  background: linear-gradient(to left,
+      rgba(77, 124, 255, 0.22) 0%,
+      rgba(46, 232, 180, 0.10) 45%,
+      transparent 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* inner grid: left names column + right quote stage */
@@ -2996,6 +3029,11 @@ section {
   text-transform: uppercase;
   color: var(--muted);
   margin-top: 4px;
+}
+
+/* Base style for mobile quotes natively bound to list (hidden on desktop config) */
+.test-mobile-q {
+  display: none;
 }
 
 /* ── right: quote stage ── */
@@ -3082,41 +3120,43 @@ section {
 /* mobile: stack vertically */
 @media (max-width: 860px) {
   .test-inner {
+    display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    height: auto;
-    padding-block: 80px;
-    align-items: start;
+    grid-template-rows: min-content 1fr;
+    /* Push the stage into remaining track */
+    height: 100dvh;
+    padding-top: clamp(80px, 12vh, 120px);
+    padding-bottom: 24px;
+    align-items: stretch;
     overflow: hidden;
   }
 
   .testimonials {
-    height: auto;
-    overflow: visible;
+    height: 100dvh;
+    overflow: hidden;
   }
 
   .test-stage {
-    height: clamp(360px, 70vw, 520px);
+    position: relative;
+    height: 100%;
+    margin-top: 0;
   }
 
+  /* Completely hide the manual card list AND its container because mobile now natively uses the central GSAP animated stage! */
+  .test-carousel,
   .test-names {
-    flex-direction: row;
-    gap: 0;
-    overflow-x: auto;
+    display: none !important;
   }
 
-  .test-name-row {
-    min-width: 160px;
-    flex-direction: column;
-    gap: 8px;
-    border-top: none;
-    border-left: 1px solid var(--line);
-    padding: 0 20px;
+  /* Make sure the headings embedded in test-slide show up */
+  .test-mobile-q {
+    display: block !important;
   }
 
-  .test-name-row:last-child {
-    border-bottom: none;
-    border-right: 1px solid var(--line);
+  /* Re-format padding for mobile typography */
+  .test-q {
+    max-width: 100%;
+    padding: 0 16px;
   }
 }
 
