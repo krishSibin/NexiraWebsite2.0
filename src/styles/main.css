@@ -1189,15 +1189,18 @@ section {
   align-items: center;
   width: 100%;
   max-width: 1400px;
-  height: clamp(80px, 17vw, 200px);
-  margin: 0 auto -8px;
+  height: clamp(100px, 24vw, 320px);
+  /* Taller to allow huge condensed font sizing */
+  margin: 0 auto -30px;
+  /* Bring it down closer to connect to SPATIAL */
   position: relative;
   background: transparent !important;
 }
 
 @media (max-width: 480px) {
   .hl-nexira-video-canvas-container {
-    height: clamp(70px, 22vw, 110px);
+    height: clamp(80px, 28vw, 160px);
+    margin: 0 auto -16px;
   }
 }
 
@@ -1205,9 +1208,10 @@ section {
 .hl-nexira-css {
   font-family: 'Big Shoulders Display', sans-serif;
   font-weight: 900;
-  font-size: clamp(60px, 17vw, 195px);
+  font-size: clamp(80px, 24vw, 300px);
+  /* Massive font size scale */
   line-height: 1;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   background: linear-gradient(90deg,
       #2ee8b4 0%,
       #4d7cff 35%,

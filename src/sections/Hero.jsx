@@ -173,15 +173,23 @@ const NexiraVideoMask = ({ src }) => {
       // This works reliably on iOS Safari GPU, whereas source-in often fails and draws rectangles.
       ctx.globalCompositeOperation = 'destination-in';
       ctx.fillStyle = '#fff';
+      // Apply similar letter-spacing to what the CSS fallback uses
+      ctx.letterSpacing = '0.05em';
 
-      // Size font to fill the canvas height, then auto-shrink to fit width
-      let fontSize = h * 0.88;
-      ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
-      const m = ctx.measureText('NEXIRA');
-      if (m.width > w * 0.92) {
-        fontSize *= (w * 0.92) / m.width;
-        ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
+      // Calculate font size to fill the width of the canvas nearly edge-to-edge
+      let baseSize = 100;
+      ctx.font = `900 ${baseSize}px "Big Shoulders Display"`;
+      let m = ctx.measureText('NEXIRA');
+
+      // Calculate scale needed to match 96% of canvas width
+      let fontSize = baseSize * ((w * 0.96) / m.width);
+
+      // Ensure the font size doesn't completely blow out the canvas height
+      if (fontSize > h * 1.5) {
+        fontSize = h * 1.5; // Big Shoulders is very tall, it can exceed container height safely since it's dense
       }
+
+      ctx.font = `900 ${fontSize}px "Big Shoulders Display"`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('NEXIRA', w / 2, h / 2);
