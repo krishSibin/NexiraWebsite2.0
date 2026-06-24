@@ -16,7 +16,18 @@ function MenuIcon() {
 }
 
 function Eyebrow({ children, className = '', style }) {
-  return <span className={`eyebrow ${className}`} style={style}>{children}</span>;
+  const defaultStyle = {
+    fontFamily: 'var(--font-mono)',
+    color: 'var(--accent)',
+    fontSize: 'clamp(18px, 2vw, 24px)',
+    letterSpacing: '0.25em',
+    textTransform: 'uppercase',
+    fontWeight: 400,
+    display: 'flex',
+    alignItems: 'center',
+    margin: 0,
+  };
+  return <span className={`eyebrow ${className}`} style={{ ...defaultStyle, ...style }}>{children}</span>;
 }
 
 /* ── Magnetic button wrapper ── */
@@ -49,7 +60,7 @@ function BtnGhost({ children, href = '#', as: Tag = 'a', ...rest }) {
 }
 
 /* ── NAV ── */
-const NAV_LINKS = ['services', 'process', 'cases', 'industries', 'contact'];
+const NAV_LINKS = ['about', 'services', 'process', 'industries', 'products', 'blog', 'alliances'];
 
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -111,6 +122,55 @@ function Nav() {
         <MenuIcon />
       </button>
 
+      <AnimatePresence>
+        {!scrolled && (
+          <motion.a
+            href="#top"
+            onClick={(e) => smoothScroll(e, 'top')}
+            className="fixed-brand-logo"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            style={{
+              position: 'fixed',
+              top: '4px',
+              left: '24px',
+              zIndex: 300,
+              pointerEvents: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '18px'
+            }}
+          >
+            <img
+              src="/logo.png"
+              alt="Nexira Logo"
+              style={{
+                height: '90px',
+                width: 'auto'
+              }}
+            />
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+              <span style={{
+                fontFamily: 'var(--font-hero)',
+                fontWeight: 800,
+                fontSize: '24px',
+                letterSpacing: '0.04em',
+                lineHeight: 1,
+                color: 'var(--text)'
+              }}>NEXIRA</span>
+              <small style={{
+                fontSize: '12px',
+                letterSpacing: '0.38em',
+                color: 'var(--muted)',
+                marginTop: '4px',
+                textTransform: 'uppercase'
+              }}>SPATIAL</small>
+            </div>
+          </motion.a>
+        )}
+      </AnimatePresence>
+
       <div className="nav-center">
         <motion.nav
           className={`nav${scrolled ? ' is-scrolled' : ''}`}
@@ -118,7 +178,7 @@ function Nav() {
           animate={{
             opacity: 1,
             y: 0,
-            maxWidth: scrolled ? '860px' : '1160px',
+            maxWidth: scrolled ? '1100px' : '1280px',
             backgroundColor: scrolled ? 'rgba(4,16,12,0.55)' : 'rgba(0,0,0,0)',
             backdropFilter: scrolled ? 'blur(48px) saturate(320%) brightness(1.08)' : 'blur(0px)',
             borderColor: scrolled ? 'rgba(46,232,180,0.28)' : 'rgba(229,231,235,0)',
@@ -126,22 +186,30 @@ function Nav() {
               ? '0 8px 48px -8px rgba(0,0,0,0.75), 0 0 24px -8px rgba(46,232,180,0.08), inset 0 1px 0 rgba(46,232,180,0.35), inset 0 -1px 0 rgba(46,232,180,0.06)'
               : '0 0px 0px 0px rgba(0,0,0,0)',
           }}
-          transition={{ type: 'spring', stiffness: 50, damping: 18, mass: 0.9 }}
+          transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
         >
           {/* brand — scrolls to top; shows active section on mobile when scrolled */}
           <a className={`brand${scrolled && activeSection ? ' brand--section' : ''}`} href="#top" onClick={(e) => smoothScroll(e, 'top')}>
-            <div className="wm">
-              <span className="wm-nexira">NEXIRA</span>
-              <small className="wm-spatial">SPATIAL</small>
-              <span className="wm-sec">{activeSection ? activeSection.charAt(0).toUpperCase() + activeSection.slice(1) : ''}</span>
-            </div>
+            {scrolled && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="wm"
+                style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+              >
+                <span className="wm-nexira">NEXIRA</span>
+                <small className="wm-spatial">SPATIAL</small>
+                {activeSection && <span className="wm-sec">{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</span>}
+              </motion.div>
+            )}
           </a>
 
           {/* desktop links */}
           <div className="nav-links">
             {NAV_LINKS.map(id => (
               <a key={id} href={`#${id}`} onClick={(e) => smoothScroll(e, id)}>
-                {id.charAt(0).toUpperCase() + id.slice(1)}
+                {id === 'about' ? 'About Us' : id.charAt(0).toUpperCase() + id.slice(1)}
               </a>
             ))}
           </div>
@@ -149,7 +217,7 @@ function Nav() {
           {/* desktop cta */}
           <div className="nav-right">
             <a className="nav-cta" href="#contact" onClick={(e) => smoothScroll(e, 'contact')}>
-              Connect Now
+              Contact Us
             </a>
           </div>
 
@@ -179,8 +247,11 @@ function Nav() {
                 {/* Header */}
                 <div className="nsd-head">
                   <div className="nsd-brand">
-                    <span>NEXIRA</span>
-                    <small>SPATIAL</small>
+                    <img src="/logo.png" alt="Logo" className="nav-logo" style={{ height: '48px', marginRight: '8px' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span>NEXIRA</span>
+                      <small>SPATIAL</small>
+                    </div>
                   </div>
                   <button className="nsd-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
                     <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
@@ -201,7 +272,7 @@ function Nav() {
                       transition={{ delay: i * 0.06 + 0.08, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     >
                       <span className="nsd-num">0{i + 1}</span>
-                      <span className="nsd-label">{id.charAt(0).toUpperCase() + id.slice(1)}</span>
+                      <span className="nsd-label">{id === 'about' ? 'About Us' : id.charAt(0).toUpperCase() + id.slice(1)}</span>
                       <svg className="nsd-arrow" width="13" height="10" viewBox="0 0 13 10" fill="none">
                         <path d="M1 5h11M7 1l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -212,7 +283,7 @@ function Nav() {
                 {/* Footer */}
                 <div className="nsd-foot">
                   <a className="nsd-cta" href="#contact" onClick={(e) => smoothScroll(e, 'contact')}>
-                    Connect Now
+                    Contact Us
                   </a>
                 </div>
               </motion.div>
@@ -227,9 +298,9 @@ function Nav() {
 
 /* ── FOOTER ── */
 const SOCIALS = [
-  { label: 'LinkedIn', d: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z' },
-  { label: 'Twitter / X', d: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z' },
-  { label: 'GitHub', d: 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/nexira-spatial/', d: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z' },
+  { label: 'Instagram', href: 'https://www.instagram.com/nexiraspatial/', d: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z' },
+  { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61585941132696', d: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z' },
 ];
 
 function Footer() {
@@ -237,10 +308,10 @@ function Footer() {
     <footer>
       <div className="foot-top">
         <div className="foot-brand">
-          <img src="/logo.png" alt="Nexira Spatial" className="foot-logo" />
+          <img src="/logo.png?v=3" alt="Nexira Spatial" className="foot-logo" />
           <div className="foot-socials">
             {SOCIALS.map((s) => (
-              <a key={s.label} href="#" className="foot-social-link" aria-label={s.label}>
+              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="foot-social-link" aria-label={s.label}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d={s.d} /></svg>
               </a>
             ))}
@@ -259,7 +330,7 @@ function Footer() {
           <h6>Company</h6>
           <ul>
             <li><a href="#about">About</a></li>
-            <li><a href="#cases">Sample Work</a></li>
+            <li><a href="#products">Products</a></li>
             <li><a href="#blog">Field Notes</a></li>
             <li><a href="#contact">Careers</a></li>
           </ul>
@@ -267,7 +338,7 @@ function Footer() {
         <div className="foot-col">
           <h6>Contact</h6>
           <ul>
-            <li><a href="mailto:nexiraspatial@gmail.com">nexiraspatial@gmail.com</a></li>
+            <li><a href="mailto:info@nexiraspatial.com">info@nexiraspatial.com</a></li>
             <li><a href="tel:+917736459090">+91 7736459090</a></li>
             <li>North Kalamassery, Kochi</li>
             <li>Kerala 683104 · IN</li>

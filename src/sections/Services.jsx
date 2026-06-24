@@ -148,12 +148,18 @@ function Services() {
   return (
     <section className="services" id="services" data-screen-label="03 Services" ref={sectionRef}>
       <div className="wrap">
-        <div className="section-head">
-          <Reveal><Eyebrow>B — Practice areas</Eyebrow></Reveal>
-          <Reveal delay={120}>
-            <h2 className="display h2">
-              Six&nbsp;specialisations.<br />
-              One&nbsp;<span style={{ color: 'var(--accent)' }}>spatial system</span>.
+        <div className="section-head" style={{ alignItems: 'center', textAlign: 'center', marginBottom: '60px' }}>
+          <Reveal>
+            <h2 style={{
+              fontFamily: 'var(--font-mono)',
+              color: 'var(--accent)',
+              fontSize: 'clamp(18px, 2vw, 24px)',
+              letterSpacing: '0.25em',
+              textTransform: 'uppercase',
+              margin: 0,
+              fontWeight: 400
+            }}>
+              Area of specialisation
             </h2>
           </Reveal>
         </div>
@@ -176,7 +182,7 @@ function Stats() {
   const sectionRef = useRef(null);
 
   const items = [
-    { v: 50, suffix: '+', lbl: 'Projects delivered', ctx: 'Across government, business & community', decimals: 0 },
+    { v: 10, suffix: '+', lbl: 'On-going projects', ctx: 'Across government, business & community', decimals: 0 },
     { v: 6, suffix: '', lbl: 'Core services', ctx: 'GIS · Mapping · Remote Sensing · AI', decimals: 0 },
     { v: 100, suffix: '+', lbl: 'Datasets processed', ctx: 'Satellite · aerial · sensor feeds', decimals: 0 },
     { v: 100, suffix: '%', lbl: 'Client focus', ctx: 'Tailored solutions for every workflow', decimals: 0 },
@@ -202,18 +208,17 @@ function Stats() {
   return (
     <section className="stats" ref={sectionRef} data-screen-label="04 Stats">
       <div className="wrap">
-        <div className="stats-intro">
-          <Reveal><Eyebrow>— Impact</Eyebrow></Reveal>
+        <div className="stats-intro" style={{ textAlign: 'center', margin: '0 auto 80px', maxWidth: 'none' }}>
           <Reveal delay={100}>
             <h2 className="display h3">
               Ground truth{' '}
-              <span style={{ color: 'var(--accent)' }}>in numbers</span>.
+              <span style={{ color: 'var(--accent)' }}>in numbers</span>
             </h2>
           </Reveal>
         </div>
         <div className="stats-grid">
           {items.map((it, i) => (
-            <div key={i} className="stat-card">
+            <div key={i} className="stat-card" style={{ alignItems: 'center', textAlign: 'center' }}>
               <div className="lbl">{it.lbl}</div>
               <div className="num">
                 <CountUp to={it.v} decimals={it.decimals} />
@@ -436,13 +441,16 @@ function Process() {
 
         {/* Header */}
         <div className="process-head">
-          <div className="wrap">
-            <Reveal><Eyebrow>C — How we work</Eyebrow></Reveal>
+          <div className="wrap" style={{ textAlign: 'center' }}>
+            <Reveal>
+              <Eyebrow style={{ justifyContent: 'center' }}>
+                How we work
+              </Eyebrow>
+            </Reveal>
             <Reveal delay={120}>
               <h2 className="display h2">
                 From{' '}
-                <span style={{ color: 'var(--accent)' }}>pixels</span>
-                <br />to decisions.
+                <span style={{ color: 'var(--accent)' }}>pixels</span> to decisions
               </h2>
             </Reveal>
           </div>
@@ -544,10 +552,12 @@ function Industries() {
     <section className="industries" id="industries" data-screen-label="06 Industries">
       <div ref={trackRef} className="ind-track">
         <div className="ind-pin">
-          <div className="ind-head">
-            <Reveal><Eyebrow>D — Industries</Eyebrow></Reveal>
+          <div className="ind-head" style={{ textAlign: 'center' }}>
+            <Reveal><Eyebrow style={{ justifyContent: 'center' }}>Industries</Eyebrow></Reveal>
             <Reveal delay={120}>
-              <h2 className="display h2">Built for the<br />ground beneath you.</h2>
+              <h2 className="display h2">
+                Built for the <span style={{ color: 'var(--accent)' }}>ground beneath</span> you
+              </h2>
             </Reveal>
           </div>
           <div className="ind-stack">

@@ -108,14 +108,14 @@ const SLIDES = [
   {
     lines: [
       ['From orbit', ''],
-      [<><span className="hl-fill">TO </span><span className="hl-earth">GROUND.</span></>, 'hl-accent'],
+      [<><span className="hl-fill">TO </span><span className="hl-earth">GROUND</span></>, 'hl-accent'],
     ],
   },
   {
     lines: [
       ['Geospatial', ''],
       ['intelligence', ''],
-      [<><span className="hl-fill">AT </span><span className="hl-scale">SCALE.</span></>, 'hl-accent'],
+      [<><span className="hl-fill">AT </span><span className="hl-scale">SCALE</span></>, 'hl-accent'],
     ],
   },
   {
@@ -498,7 +498,7 @@ function About() {
   const wordsWrapRef = useRef(null);
   const progressRef = useRef(null);
 
-  const sentence = "We\'re a geospatial intelligence startup delivering custom GIS solutions, location analytics, and spatial data services — making location data work smarter for you.";
+  const sentence = "We\'re a geospatial intelligence startup delivering custom GIS solutions, location analytics, and spatial data services — making location data work smarter for you";
   const words = sentence.split(/\s+/);
   const accentSet = new Set(['smarter', 'intelligence', 'GIS', 'analytics']);
 
@@ -549,7 +549,17 @@ function About() {
           <TerrainAboutBg />
           <div className="about-overlay" />
           <div className="about-content">
-            <div className="eyebrow">A — Mission</div>
+            <h2 style={{
+              fontFamily: 'var(--font-mono)',
+              color: 'var(--accent)',
+              fontSize: 'clamp(18px, 2vw, 24px)',
+              letterSpacing: '0.25em',
+              textTransform: 'uppercase',
+              margin: 0,
+              fontWeight: 400
+            }}>
+              ABOUT US
+            </h2>
             <h2 className="about-words" ref={wordsWrapRef}>
               {words.map((w, i) => (
                 <span key={i} className={`word${accentSet.has(w) ? ' accent' : ''}`}>

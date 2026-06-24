@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Reveal, SplitText, CountUp } from '../hooks';
@@ -182,7 +182,7 @@ gsap.registerPlugin(ScrollTrigger);
 const CASES = [
   {
     num: '01 / 02', chip: 'HAZARD ANALYSIS / 2025',
-    title: 'Hazard Analysis Dashboard',
+    title: 'Multi Hazard Dashboard',
     body: 'An interactive risk intelligence platform for spatial hazard assessment — visualising multi-layered threat data, risk zones and analytical outputs for informed decision-making.',
     meta: [['Type', 'Dashboard'], ['Domain', 'Hazard GIS'], ['Stack', 'MapLibre']],
     img: '/case-hazard-dashboard.jpg',
@@ -190,7 +190,7 @@ const CASES = [
   },
   {
     num: '02 / 02', chip: 'WEB MAPPING / 2025',
-    title: 'Interactive Hazard Web Map',
+    title: 'GIS interactive webmap',
     body: 'A live web mapping platform for real-time hazard visualisation — integrating spatial data layers, custom cartography and geospatial analysis accessible from any browser.',
     meta: [['Type', 'Web Map'], ['Domain', 'Hazard GIS'], ['Stack', 'Leaflet']],
     img: '/case-hazard-webmap.jpg',
@@ -199,96 +199,77 @@ const CASES = [
 ];
 
 function Cases() {
-  const wrapRef = useRef(null);
-  const stackRef = useRef(null);
-  const cardRefs = useRef([]);
-  const N = CASES.length;
-
-  useEffect(() => {
-    const section = wrapRef.current;
-    if (!section) return;
-    const cards = cardRefs.current.filter(Boolean);
-    if (cards.length !== N) return;
-
-    const ctx = gsap.context(() => {
-      /* Card 0 sits at full size. Cards 1..N-1 start hidden BELOW the viewport */
-      gsap.set(cards[0], { yPercent: 0, zIndex: 1 });
-      cards.slice(1).forEach((card, i) => {
-        gsap.set(card, { yPercent: 100, zIndex: i + 2 });
-      });
-
-      /* Pin section for (N-1) extra screens */
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: () => `+=${(N - 1) * window.innerHeight}`,
-          pin: true,
-          pinSpacing: true,
-          scrub: 1,
-        },
-      });
-
-      /* Each step: slide next card up from 100% to 0% */
-      cards.slice(1).forEach((card) => {
-        tl.to(card, { yPercent: 0, ease: 'none', duration: 1 });
-      });
-
-    }, section);
-
-    return () => ctx.revert();
-  }, [N]);
+  const sectionRef = useRef(null);
 
   return (
-    <section className="cases" id="cases" data-screen-label="07 Cases" ref={wrapRef}>
-      <div className="cases-stack" ref={stackRef}>
-        {CASES.map((c, i) => (
-          <div
-            key={i}
-            className="case-card"
-            ref={el => { cardRefs.current[i] = el; }}
-          >
-            <div className="case-card-bg" style={{ backgroundImage: 'url(' + c.img + ')' }} />
-            <div className="case-card-scrim" />
-
-            <div className="case-card-topbar">
-              <span className="case-card-chip">{c.chip}</span>
-              <span className="case-card-num">{c.num}</span>
+    <section className="cases" id="products" data-screen-label="07 Products" ref={sectionRef}>
+      {CASES.map((c, i) => (
+        <div key={i} className="case-portal">
+          <div className="wrap portal-content" style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            gap: '32px',
+            paddingTop: '100px',
+            paddingBottom: '80px',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            {/* Header Content */}
+            <div className="portal-head" style={{ textAlign: 'center', width: '100%', marginBottom: '20px' }}>
+              <Reveal>
+                <Eyebrow style={{ letterSpacing: '0.4em', justifyContent: 'center' }}>OUR PRODUCTS</Eyebrow>
+              </Reveal>
             </div>
 
-            {/* eyebrow only on first card */}
-            {i === 0 && (
-              <div className="case-card-eyebrow">
-                <Eyebrow>E — Selected work</Eyebrow>
-              </div>
-            )}
+            {/* The "Main Card" */}
+            <div className="portal-card-wrap" style={{ width: '100%', maxWidth: '1000px' }}>
+              <div className="portal-card-inner">
+                <img src={c.img} alt={c.title} className="portal-card-img" style={{ width: '100%', height: 'auto', display: 'block' }} />
 
-            <div className="case-card-body">
-              <div className="case-card-left">
-                <h3 className="case-card-title">{c.title}</h3>
-                <p className="case-card-desc">{c.body}</p>
-                <BtnGhost href={c.url} as="a" target="_blank" rel="noopener noreferrer">View Case Study</BtnGhost>
-              </div>
-              <div className="case-card-stats">
-                {c.meta.map(([l, v]) => (
-                  <div key={l} className="case-card-stat">
-                    <span className="case-card-stat-v">{v}</span>
-                    <span className="case-card-stat-l">{l}</span>
-                  </div>
-                ))}
+                {/* Centered Button Overlay (shows on hover) */}
+                <div className="portal-card-hover-overlay">
+                  <a href={c.url} target="_blank" rel="noopener noreferrer" className="portal-btn">
+                    LAUNCH PLATFORM
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </a>
+                </div>
               </div>
             </div>
 
-            <div className="case-card-idx">
-              <span>{String(i + 1).padStart(2, '0')}</span>
-              <span className="case-card-idx-total">/ {String(N).padStart(2, '0')}</span>
+            {/* Outside Bottom Content Area */}
+            <div className="portal-foot" style={{ textAlign: 'center', width: '100%', marginTop: '30px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Reveal delay={100}>
+                <h2 className="portal-title" style={{
+                  fontSize: 'clamp(20px, 3.5vw, 32px)',
+                  color: '#fff',
+                  marginBottom: '12px',
+                  textTransform: 'uppercase'
+                }}>
+                  {c.title}
+                </h2>
+              </Reveal>
+              <Reveal delay={200}>
+                <p className="portal-desc" style={{
+                  maxWidth: '600px',
+                  color: 'rgba(255,255,255,0.5)',
+                  margin: '0 auto'
+                }}>
+                  {c.body}
+                </p>
+              </Reveal>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </section>
   );
 }
+
+
+
 
 /* ============================================================
    TECH STACK
@@ -384,11 +365,15 @@ function Tech() {
   return (
     <section className="tech" id="tech" data-screen-label="08 Stack" ref={sectionRef}>
 
-      {/* header */}
+      {/* section heading */}
+      <div className="wrap" style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <Reveal><Eyebrow style={{ justifyContent: 'center' }}>OUR TECHNOLOGIES</Eyebrow></Reveal>
+      </div>
+
+      {/* detail head */}
       <div className="wrap tech-head">
         <div>
-          <Reveal><Eyebrow>F — Toolchain</Eyebrow></Reveal>
-          <Reveal delay={80}><h2 className="display h2">Standards in.<br />Decisions out.</h2></Reveal>
+          <Reveal delay={80}><h2 className="display h2">Standards in.<br />Decisions out</h2></Reveal>
         </div>
         <Reveal delay={200} className="tech-head-right">
           <p className="lede" style={{ maxWidth: '34ch', margin: 0 }}>
@@ -494,17 +479,21 @@ function Testimonials() {
 
   return (
     <section className="testimonials" id="why-choose-us" data-screen-label="09 Choose Us" ref={sectionRef}>
-      <div className="test-inner wrap">
 
-        {/* left column — header + desktop feature list */}
+      {/* 1. Global centered header */}
+      <div className="wrap" style={{ paddingTop: '120px', textAlign: 'center' }}>
+        <div className="test-head" style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Eyebrow style={{ marginBottom: 24, justifyContent: 'center' }}>Why Choose Us</Eyebrow>
+          <p style={{ color: 'var(--accent)', fontSize: '13px', letterSpacing: '0.15em', textTransform: 'uppercase', margin: '0 auto', lineHeight: 1.6, maxWidth: '60ch' }}>
+            Built on local roots with global capabilities — practical, precise, and proven.
+          </p>
+        </div>
+      </div>
+
+      {/* 2. Split content inner grid */}
+      <div className="test-inner wrap">
+        {/* left column — desktop feature list */}
         <div className="test-left-column" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-          {/* section header (visible on all screens) */}
-          <div className="test-head">
-            <Eyebrow style={{ marginBottom: 40 }}>G — Why Choose Us</Eyebrow>
-            <p style={{ color: 'var(--accent)', fontSize: '12px', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 40, lineHeight: 1.6 }}>
-              Built on local roots with global capabilities — practical, precise, and proven.
-            </p>
-          </div>
 
           <div className="test-names">
             <div className="test-carousel">
@@ -573,8 +562,8 @@ function Blog() {
       <div className="wrap">
         <div className="section-head" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'end', gap: 32, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            <Reveal><Eyebrow>H — Field notes</Eyebrow></Reveal>
-            <Reveal delay={120}><h2 className="display h2">From the field.</h2></Reveal>
+            <Reveal><Eyebrow>Field notes</Eyebrow></Reveal>
+            <Reveal delay={120}><h2 className="display h2">From the field</h2></Reveal>
           </div>
           <Reveal delay={240}><BtnGhost href="#">All Articles →</BtnGhost></Reveal>
         </div>
@@ -609,7 +598,7 @@ function CTA() {
         </Reveal>
 
         <Reveal delay={300}>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 'clamp(14px,1.6vw,18px)', maxWidth: '42ch', margin: '0 auto var(--spacing-40)', lineHeight: 1.7 }}>
+          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 'clamp(14px,1.6vw,18px)', maxWidth: '54ch', margin: '0 auto var(--spacing-40)', lineHeight: 1.7 }}>
             Suite No 290B, Heiley Offices, Basement Floor,<br />
             Pallath Square, North Kalamassery, Kochi, Kerala 683104
           </p>
@@ -617,7 +606,7 @@ function CTA() {
 
         <Reveal delay={600}>
           <div className="cta-row" style={{ display: 'flex', gap: 'var(--spacing-20)', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="mailto:nexiraspatial@gmail.com" className="atmos-explore-btn btn-revealer" data-hover="nexiraspatial@gmail.com" style={{ margin: 0 }}>
+            <a href="mailto:info@nexiraspatial.com" className="atmos-explore-btn btn-revealer" data-hover="info@nexiraspatial.com" style={{ margin: 0 }}>
               <span className="btn-label">Email Us</span>
             </a>
             <a href="tel:+917736459090" className="atmos-explore-btn btn-revealer" data-hover="+91 7736459090" style={{ margin: 0 }}>

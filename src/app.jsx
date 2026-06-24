@@ -158,7 +158,7 @@ function App() {
       <div className="foot-silhouette" aria-hidden="true">
         <svg viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <path
-            d="M0,0 L1440,0 L1440,180 Q720,60 0,180 Z"
+            d="M0,0 L1440,0 L1440,140 L0,140 Z"
             fill="#000"
           />
         </svg>
