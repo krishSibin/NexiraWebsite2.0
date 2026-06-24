@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Reveal, CountUp } from '../hooks';
@@ -464,7 +465,17 @@ function Process() {
                 <div className="proc-connector" />
                 <div className="proc-slide-num">{s.n} / 04</div>
                 <h3 className="proc-slide-title">{s.h}</h3>
-                <p className="proc-slide-desc">{s.p}</p>
+                <p className="proc-slide-desc">
+                  {s.p.split(' ').map((word, j) => (
+                    <span
+                      key={j}
+                      className="proc-reveal-word"
+                      style={{ animationDelay: `${j * 0.05}s` }}
+                    >
+                      {word}
+                    </span>
+                  ))}
+                </p>
                 <div className="proc-slide-coord">{s.coord}</div>
               </div>
             </div>
@@ -492,6 +503,7 @@ function Industries() {
   const trackRef = useRef(null);
   const cardRefs = useRef([]);
   const progRefs = useRef([]);
+  const textRefs = useRef([]);
   const N = INDUSTRIES.length;
 
   useEffect(() => {
@@ -503,6 +515,10 @@ function Industries() {
       /* card 0 is visible from the start; cards 1–5 hidden */
       gsap.set(cards[0], { clipPath: 'inset(0% 0% 0% 0% round 16px)' });
       gsap.set(cards.slice(1), { clipPath: 'inset(100% 0% 0% 0% round 16px)' });
+
+      /* text 0 is visible; others hidden */
+      gsap.set(textRefs.current, { autoAlpha: 0, y: 30, width: '100%', pointerEvents: 'none' });
+      gsap.set(textRefs.current[0], { autoAlpha: 1, y: 0, pointerEvents: 'auto' });
 
       /* mark first item active immediately */
       if (progRefs.current[0]) progRefs.current[0].classList.add('active');
@@ -542,6 +558,10 @@ function Industries() {
           { scale: 0.91, yPercent: -2.5, ease: 'power2.inOut', duration: 0.75 },
           t
         );
+
+        /* text transition */
+        tl.to(textRefs.current[i - 1], { autoAlpha: 0, y: -30, pointerEvents: 'none', duration: 0.4 }, t);
+        tl.fromTo(textRefs.current[i], { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, pointerEvents: 'auto', duration: 0.4 }, t + 0.35);
       }
     }, trackRef);
 
@@ -572,13 +592,30 @@ function Industries() {
                 <div className="ind-overlay" />
                 <span className="ind-n">{it.n}</span>
                 <span className="ind-tag">{it.tag}</span>
-                <div className="ind-bot">
-                  <span className="ind-coords">{it.coords}</span>
-                  <h4 className="ind-h">{it.h}</h4>
-                  <p className="ind-p">{it.p}</p>
-                </div>
               </div>
             ))}
+
+            {/* Central Text Stage */}
+            <div className="ind-center-stage">
+              {INDUSTRIES.map((it, i) => (
+                <div
+                  key={i}
+                  ref={el => { textRefs.current[i] = el; }}
+                  className={`ind-text-slide ${i === 0 ? 'active' : ''}`}
+                  id={`ind-text-${i}`}
+                >
+                  <span className="ind-coords">{it.coords}</span>
+                  <h4 className="ind-h">{it.h}</h4>
+                  <p className="ind-p">
+                    {it.p.split(' ').map((word, j) => (
+                      <span key={j} className="proc-reveal-word" style={{ animationDelay: `${j * 0.05}s` }}>
+                        {word}
+                      </span>
+                    ))}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
           {/* progress tracker */}
           <div className="ind-progress">

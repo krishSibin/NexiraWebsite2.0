@@ -317,10 +317,10 @@ function Hero() {
         { borderRadius: '20px', scale: 0.88, ease: 'power2.inOut', duration: 0.8 }, 2.2);
 
       /* ── product card: rises from below on slide 3 (t=2.2→3) ── */
-      tl.set(cardRef.current, { y: 220, opacity: 0, rotateX: 10 }, 0);
+      tl.set(cardRef.current, { y: 240, opacity: 0, rotateX: 10 }, 0);
       tl.fromTo(cardRef.current,
-        { y: 220, opacity: 0, rotateX: 10, transformPerspective: 900 },
-        { y: 0, opacity: 1, rotateX: 0, ease: 'power3.out', duration: 0.7 }, 2.3);
+        { y: 240, opacity: 0, rotateX: 10, transformPerspective: 900 },
+        { y: 80, opacity: 1, rotateX: 0, ease: 'power3.out', duration: 0.7 }, 2.3);
 
       /* ── text: transitions centered exactly at t=1 and t=2 ── */
       tl.fromTo(slideRefs.current[0],
@@ -374,8 +374,26 @@ function Hero() {
               </h1>
               {s.cta && (
                 <div className="hs-cta-row">
-                  <BtnPrimary href="#contact">Get Started</BtnPrimary>
-                  <BtnGhost href="#cases">View Our Work</BtnGhost>
+                  <BtnPrimary
+                    href="#services"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const el = document.getElementById('services');
+                      if (el) window.lenis?.scrollTo(el);
+                    }}
+                  >
+                    Get Started
+                  </BtnPrimary>
+                  <BtnGhost
+                    href="#products"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const el = document.getElementById('products');
+                      if (el) window.lenis?.scrollTo(el);
+                    }}
+                  >
+                    View Our Work
+                  </BtnGhost>
                 </div>
               )}
             </div>

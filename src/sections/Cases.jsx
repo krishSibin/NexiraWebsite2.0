@@ -210,7 +210,7 @@ function Cases() {
             alignItems: 'center',
             textAlign: 'center',
             gap: '32px',
-            paddingTop: '100px',
+            paddingTop: 'clamp(140px, 15vh, 180px)',
             paddingBottom: '80px',
             display: 'flex',
             flexDirection: 'column'
@@ -224,8 +224,8 @@ function Cases() {
 
             {/* The "Main Card" */}
             <div className="portal-card-wrap" style={{ width: '100%', maxWidth: '1000px' }}>
-              <div className="portal-card-inner">
-                <img src={c.img} alt={c.title} className="portal-card-img" style={{ width: '100%', height: 'auto', display: 'block' }} />
+              <div className="portal-card-inner" style={{ maxHeight: '50vh', overflow: 'hidden', borderRadius: '12px' }}>
+                <img src={c.img} alt={c.title} className="portal-card-img" style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
 
                 {/* Centered Button Overlay (shows on hover) */}
                 <div className="portal-card-hover-overlay">
@@ -253,9 +253,11 @@ function Cases() {
               </Reveal>
               <Reveal delay={200}>
                 <p className="portal-desc" style={{
-                  maxWidth: '600px',
-                  color: 'rgba(255,255,255,0.5)',
-                  margin: '0 auto'
+                  maxWidth: '700px',
+                  color: 'rgba(255,255,255,0.75)',
+                  margin: '0 auto',
+                  fontSize: 'clamp(14px, 1.2vw, 16px)',
+                  lineHeight: '1.6'
                 }}>
                   {c.body}
                 </p>
@@ -445,12 +447,15 @@ function Testimonials() {
     const slides = slidesRef.current.filter(Boolean);
     const names = namesRef.current.filter(Boolean);
 
-    // Mobile animation engine is now enabled (GSAP runs on all screens)
+    if (!slides.length) return;
 
+    // Immediately set first slide visible BEFORE any GSAP batching
     gsap.set(slides, { autoAlpha: 0, y: 60 });
     gsap.set(slides[0], { autoAlpha: 1, y: 0 });
-    gsap.set(names, { opacity: 0.3 });
-    gsap.set(names[0], { opacity: 1 });
+    if (names.length) {
+      gsap.set(names, { opacity: 0.3 });
+      gsap.set(names[0], { opacity: 1 });
+    }
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -481,7 +486,7 @@ function Testimonials() {
     <section className="testimonials" id="why-choose-us" data-screen-label="09 Choose Us" ref={sectionRef}>
 
       {/* 1. Global centered header */}
-      <div className="wrap" style={{ paddingTop: '120px', textAlign: 'center' }}>
+      <div className="wrap" style={{ paddingTop: '160px', textAlign: 'center' }}>
         <div className="test-head" style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Eyebrow style={{ marginBottom: 24, justifyContent: 'center' }}>Why Choose Us</Eyebrow>
           <p style={{ color: 'var(--accent)', fontSize: '13px', letterSpacing: '0.15em', textTransform: 'uppercase', margin: '0 auto', lineHeight: 1.6, maxWidth: '60ch' }}>

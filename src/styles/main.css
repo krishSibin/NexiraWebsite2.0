@@ -381,7 +381,7 @@ section {
   transform: scale(1.05);
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1084px) {
   .fixed-brand-logo {
     top: 12px !important;
     left: 12px !important;
@@ -408,7 +408,7 @@ section {
 }
 
 /* Mobile scrolled into a section: swap NEXIRA SPATIAL → section name */
-@media (max-width: 880px) {
+@media (max-width: 1084px) {
 
   .nav .brand.brand--section .wm-nexira,
   .nav .brand.brand--section .wm-spatial {
@@ -428,6 +428,42 @@ section {
   }
 
 }
+
+.fixed-brand-logo {
+  top: 4px;
+  left: 24px;
+}
+
+@media (max-width: 1084px) {
+  .fixed-brand-logo {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    top: 6px !important;
+  }
+
+  .nav-right .nav-cta {
+    display: none;
+  }
+
+  .nav-float-ham {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    position: fixed;
+    top: 23px !important;
+    right: 20px !important;
+    color: var(--text);
+    cursor: pointer;
+    z-index: 1001;
+  }
+
+  .fixed-brand-logo img {
+    height: 60px !important;
+  }
+}
+
 
 .nav .brand .wm-nexira {
   display: block;
@@ -494,8 +530,9 @@ section {
 }
 
 .nav-cta:hover {
-  background: rgba(46, 232, 180, 0.15);
-  border-color: rgba(46, 232, 180, 0.6);
+  background: #fff;
+  color: #000;
+  border-color: #fff;
   transform: translateY(-1px);
 }
 
@@ -712,17 +749,11 @@ section {
   color: rgba(229, 231, 235, 0.9);
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1084px) {
   .nav-float-ham {
     display: flex;
   }
 
-  /* ≤480px uses 8px nav padding → pill center is 2px higher */
-  @media (max-width: 480px) {
-    .nav-float-ham {
-      top: 25px;
-    }
-  }
 }
 
 .nm-num {
@@ -734,7 +765,7 @@ section {
   font-stretch: 100%;
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1084px) {
 
   .nav-links,
   .nav-right {
@@ -1216,7 +1247,7 @@ section {
   text-transform: uppercase;
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1084px) {
   .hs-scroll-hint {
     transform: translateX(-50%) scale(0.7);
     bottom: 24px;
@@ -2255,6 +2286,25 @@ section {
   max-width: 420px;
 }
 
+.proc-reveal-word {
+  display: inline-block;
+  margin-right: 0.25em;
+  opacity: 0;
+  animation: proc-word-fade 0.5s ease forwards;
+}
+
+@keyframes proc-word-fade {
+  from {
+    opacity: 0.2;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .proc-slide-coord {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -2447,11 +2497,13 @@ section {
   flex-direction: column;
   justify-content: center;
   gap: 28px;
+  padding-top: clamp(100px, 12vh, 140px);
 }
 
 /* heading: left edge of viewport, no centering */
 .ind-head {
   padding: 0 clamp(24px, 5vw, 72px);
+  padding-bottom: 60px;
   flex-shrink: 0;
 }
 
@@ -2459,7 +2511,7 @@ section {
 .ind-stack {
   position: relative;
   width: min(1160px, 88vw);
-  height: min(580px, 60vh);
+  height: min(580px, 55vh);
   margin: 0 auto;
   flex-shrink: 0;
 }
@@ -2558,14 +2610,61 @@ section {
   transform: translateY(0);
 }
 
-/* bottom info */
-.ind-bot {
+/* Centralized text stage for industries */
+.ind-center-stage {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  padding: clamp(20px, 3vw, 36px);
+  inset: 0;
+  display: grid;
+  align-items: end;
+  justify-items: start;
+  z-index: 100;
+  pointer-events: none;
+  padding: 60px clamp(24px, 5vw, 72px) 32px;
+}
+
+.ind-text-slide {
+  grid-area: 1/1;
+  max-width: 100%;
+  width: auto;
+  text-align: left;
+  pointer-events: none;
+}
+
+.ind-h {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(20px, 3.5vw, 32px);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 95%;
+}
+
+.ind-p {
+  margin-top: 12px;
+  font-size: 14px;
+  max-width: 45ch;
+  color: var(--text-2);
+  line-height: 1.6;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
+}
+
+.ind-stack:hover .ind-p {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.ind-bot {
+  display: none;
+  /* hidden if still in JSX */
 }
 
 .ind-coords {
@@ -2577,31 +2676,8 @@ section {
   margin-bottom: 12px;
 }
 
-.ind-h {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(20px, 3vw, 42px);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #fff;
-  margin: 0 0 10px;
-  line-height: 1.1;
-}
-
-.ind-p {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.42);
-  margin: 0;
-  line-height: 1.6;
-  max-width: 520px;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.3s 0.05s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.ind-card:hover .ind-p {
-  opacity: 1;
-  transform: translateY(0);
+.ind-p-legacy {
+  /* cleaned */
 }
 
 /* ── progress tracker ─────────────────────────────── */
@@ -2664,14 +2740,15 @@ section {
   }
 
   .ind-h {
-    font-size: clamp(18px, 5vw, 28px);
+    font-size: clamp(16px, 5vw, 22px);
+    white-space: normal;
+    overflow: visible;
+    max-width: 90%;
   }
 
-  /* Permanently show subtext and realistic shadow on mobile (no hover available) */
+  /* Subtext follows hover logic across all screens */
   .ind-p {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-    display: block !important;
+    display: block;
   }
 
   .ind-overlay::after {
@@ -2705,7 +2782,7 @@ section {
 .cases {
   position: relative;
   background: var(--bg);
-  z-index: 5;
+  z-index: 10;
 }
 
 .case-portal {
@@ -2717,6 +2794,27 @@ section {
   display: flex;
   align-items: center;
   overflow: hidden;
+}
+
+/* Subtle atmospheric overlay — inspired by About section vignette */
+.case-portal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(to bottom, #000 0%, transparent 15%, transparent 85%, #000 100%),
+    radial-gradient(ellipse at 50% 50%, transparent 0%, rgba(5, 7, 13, 0.45) 85%),
+    radial-gradient(circle at 0% 50%, rgba(46, 232, 180, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 100% 50%, rgba(36, 120, 240, 0.10) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.95;
+}
+
+.case-portal::after {
+  display: none;
 }
 
 /* Card Layer */
@@ -2878,8 +2976,9 @@ section {
 .tech {
   --tmq-boost: 1;
   padding-block: 80px 120px;
-  background: var(--bg-2);
+  background: linear-gradient(to bottom, #000 0%, var(--bg-2) 15%, var(--bg-2) 85%, #000 100%);
   overflow: hidden;
+  position: relative;
 }
 
 .tech-head {
@@ -3224,49 +3323,66 @@ section {
   margin-top: 3px;
 }
 
-/* mobile: stack vertically */
+/* mobile: full flex column layout */
 @media (max-width: 860px) {
-  .test-inner {
-    display: block;
+
+  /* Section is a flex column filling the viewport */
+  .testimonials {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* Header: compact, takes its natural height */
+  .testimonials>.wrap:first-child {
+    padding-top: 90px !important;
+    padding-bottom: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Inner grid: grows to fill all remaining space */
+  .test-inner {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
     padding: 0;
     overflow: hidden;
   }
 
+  /* Left column hidden on mobile */
   .test-left-column {
-    position: absolute;
-    top: clamp(80px, 12vh, 120px);
-    left: 16px;
-    right: 16px;
-    z-index: 10;
-    pointer-events: none;
-    /* Let touches pass to canvas if needed */
+    display: none;
   }
 
-  .testimonials {
-    height: 100dvh;
-    overflow: hidden;
-  }
-
+  /* Stage fills all remaining space — grid container for slide stacking */
   .test-stage {
-    position: absolute;
-    top: 250px;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    flex: 1;
     height: auto;
+    min-height: 0;
     width: 100%;
-    margin: 0;
+    margin-top: -60px;
+    overflow: hidden;
     z-index: 1;
+    display: grid;
   }
 
-  /* Completely hide the manual card list AND its container because mobile now natively uses the central GSAP animated stage! */
+  /* Completely hide the manual card list */
   .test-carousel,
   .test-names {
     display: none !important;
   }
 
-  /* Make sure the headings embedded in test-slide show up */
+  /* Make sure the headings in test-slide show up */
   .test-mobile-q {
     display: block !important;
   }
@@ -3275,11 +3391,31 @@ section {
   .test-q {
     max-width: 100%;
     padding: 0 16px;
+    font-size: clamp(20px, 5vw, 32px) !important;
   }
 
-  /* Show the heading under the logo ONLY on mobile */
+  /* Show the numbered heading on mobile */
   .test-slide-heading {
     display: block !important;
+  }
+
+  /* Slide stacks in grid, centers content — overrides position: absolute */
+  .test-slide {
+    grid-area: 1/1;
+    position: relative !important;
+    inset: auto !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    gap: 12px;
+  }
+
+  /* Hide the SVG logo on mobile only */
+  .test-slide>[aria-hidden="true"] {
+    display: none;
   }
 }
 
@@ -3514,7 +3650,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.15em;
+  gap: 0.35em;
   font-family: 'Psionic', 'Bourbon', sans-serif;
   font-size: 32px;
   /* fallback, JS will override */

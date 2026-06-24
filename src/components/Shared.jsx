@@ -61,8 +61,22 @@ function BtnGhost({ children, href = '#', as: Tag = 'a', ...rest }) {
 
 /* ── NAV ── */
 const NAV_LINKS = ['about', 'services', 'process', 'industries', 'products', 'blog', 'alliances'];
+const TRACKED_SECTIONS = [...NAV_LINKS, 'tech', 'why-choose-us', 'contact'];
 
-function Nav() {
+const SECTION_LABELS = {
+  'about': 'About Us',
+  'services': 'Services',
+  'process': 'Our Process',
+  'industries': 'Industries',
+  'products': 'Our Work',
+  'tech': 'Tech Stack',
+  'why-choose-us': 'Why Nexira',
+  'blog': 'Field Notes',
+  'alliances': 'Alliances',
+  'contact': 'Connect'
+};
+
+function Nav({ onPageChange, currentView }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
@@ -96,7 +110,7 @@ function Nav() {
       },
       { rootMargin: '-35% 0px -35% 0px', threshold: 0 }
     );
-    NAV_LINKS.forEach(id => {
+    TRACKED_SECTIONS.forEach(id => {
       const el = document.getElementById(id);
       if (el) obs.observe(el);
     });
@@ -106,9 +120,13 @@ function Nav() {
   const smoothScroll = (e, id) => {
     const el = document.getElementById(id);
     if (!el) return;
-    e.preventDefault();
+    if (e) e.preventDefault();
     setMenuOpen(false);
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.lenis) {
+      window.lenis.scrollTo(el);
+    } else {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
@@ -126,47 +144,28 @@ function Nav() {
         {!scrolled && (
           <motion.a
             href="#top"
-            onClick={(e) => smoothScroll(e, 'top')}
+            onClick={(e) => { onPageChange?.('home'); smoothScroll(e, 'top'); }}
             className="fixed-brand-logo"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             style={{
               position: 'fixed',
-              top: '4px',
-              left: '24px',
-              zIndex: 300,
-              pointerEvents: 'auto',
+              zIndex: 1000,
+              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '18px'
             }}
           >
             <img
-              src="/logo.png"
+              src="/circle%20logo.png"
               alt="Nexira Logo"
               style={{
                 height: '90px',
                 width: 'auto'
               }}
             />
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-              <span style={{
-                fontFamily: 'var(--font-hero)',
-                fontWeight: 800,
-                fontSize: '24px',
-                letterSpacing: '0.04em',
-                lineHeight: 1,
-                color: 'var(--text)'
-              }}>NEXIRA</span>
-              <small style={{
-                fontSize: '12px',
-                letterSpacing: '0.38em',
-                color: 'var(--muted)',
-                marginTop: '4px',
-                textTransform: 'uppercase'
-              }}>SPATIAL</small>
-            </div>
           </motion.a>
         )}
       </AnimatePresence>
@@ -189,26 +188,39 @@ function Nav() {
           transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
         >
           {/* brand — scrolls to top; shows active section on mobile when scrolled */}
-          <a className={`brand${scrolled && activeSection ? ' brand--section' : ''}`} href="#top" onClick={(e) => smoothScroll(e, 'top')}>
+          <a className={`brand${scrolled && activeSection ? ' brand--section' : ''}`} href="#top" onClick={(e) => { onPageChange?.('home'); smoothScroll(e, 'top'); }}>
             {scrolled && (
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="wm"
-                style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+                style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '2px' }}
               >
                 <span className="wm-nexira">NEXIRA</span>
                 <small className="wm-spatial">SPATIAL</small>
-                {activeSection && <span className="wm-sec">{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</span>}
+                {(currentView === 'alliances' ? 'alliances' : activeSection) && (
+                  <span className="wm-sec">
+                    {SECTION_LABELS[currentView === 'alliances' ? 'alliances' : activeSection] || activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}
+                  </span>
+                )}
               </motion.div>
             )}
           </a>
 
-          {/* desktop links */}
           <div className="nav-links">
             {NAV_LINKS.map(id => (
-              <a key={id} href={`#${id}`} onClick={(e) => smoothScroll(e, id)}>
+              <a
+                key={id}
+                href={id === 'blog' || id === 'alliances' ? '#' : `#${id}`}
+                onClick={(e) => {
+                  if (id === 'blog') { e.preventDefault(); return; }
+                  if (id === 'alliances') { e.preventDefault(); onPageChange?.('alliances'); setMenuOpen(false); return; }
+                  onPageChange?.('home');
+                  smoothScroll(e, id);
+                }}
+                style={id === 'blog' ? { cursor: 'default' } : undefined}
+              >
                 {id === 'about' ? 'About Us' : id.charAt(0).toUpperCase() + id.slice(1)}
               </a>
             ))}
@@ -246,13 +258,7 @@ function Nav() {
               >
                 {/* Header */}
                 <div className="nsd-head">
-                  <div className="nsd-brand">
-                    <img src="/logo.png" alt="Logo" className="nav-logo" style={{ height: '48px', marginRight: '8px' }} />
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span>NEXIRA</span>
-                      <small>SPATIAL</small>
-                    </div>
-                  </div>
+                  <img src="/circle%20logo.png" alt="Logo" className="nav-logo" style={{ height: '48px' }} />
                   <button className="nsd-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
                     <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
                       <path d="M1 1l9 9M10 1l-9 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -260,13 +266,17 @@ function Nav() {
                   </button>
                 </div>
 
-                {/* Links */}
                 <nav className="nsd-links">
                   {NAV_LINKS.map((id, i) => (
                     <motion.a
                       key={id}
-                      href={`#${id}`}
-                      onClick={(e) => smoothScroll(e, id)}
+                      href={id === 'blog' || id === 'alliances' ? '#' : `#${id}`}
+                      onClick={(e) => {
+                        if (id === 'blog') { e.preventDefault(); return; }
+                        if (id === 'alliances') { e.preventDefault(); onPageChange?.('alliances'); setMenuOpen(false); return; }
+                        onPageChange?.('home');
+                        smoothScroll(e, id);
+                      }}
                       initial={{ opacity: 0, x: 28 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.06 + 0.08, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -289,9 +299,10 @@ function Nav() {
               </motion.div>
             </>
           )}
-        </AnimatePresence>,
+        </AnimatePresence >,
         document.body
-      )}
+      )
+      }
     </>
   );
 }
@@ -329,10 +340,10 @@ function Footer() {
         <div className="foot-col">
           <h6>Company</h6>
           <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#products">Products</a></li>
-            <li><a href="#blog">Field Notes</a></li>
-            <li><a href="#contact">Careers</a></li>
+            <li><a href="#about" onClick={(e) => { e.preventDefault(); const el = document.getElementById('about'); if (el) window.lenis?.scrollTo(el); }}>About</a></li>
+            <li><a href="#products" onClick={(e) => { e.preventDefault(); const el = document.getElementById('products'); if (el) window.lenis?.scrollTo(el); }}>Products</a></li>
+            <li><a href="#" onClick={(e) => e.preventDefault()}>Field Notes</a></li>
+            <li><a href="#contact" onClick={(e) => { e.preventDefault(); const el = document.getElementById('contact'); if (el) window.lenis?.scrollTo(el); }}>Careers</a></li>
           </ul>
         </div>
         <div className="foot-col">
